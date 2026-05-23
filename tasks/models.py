@@ -1,3 +1,37 @@
 from django.db import models
-
+from django.contrib.auth.models import User
 # Create your models here.
+
+    
+class Category(models.Model):
+    owner = models.ForeignKey(User, on_delete=models.CASCADE, related_name='categories')
+    name = models.CharField(max_length=255)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        unique_together = ('owner', 'name')
+    def __str__(self):
+        return self.name
+
+class Task(models.Model):
+    owner = models.ForeignKey(User, on_delete=models.CASCADE, related_name='tasks')
+    shared_with = models.ManyToManyField(User, related_name='shared_tasks', through="TaskShare", blank=True)
+
+    title = models.CharField(max_length=255)
+    description = models.TextField(blank=True)
+    completed = models.BooleanField(default=False)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return self.title
+    
+
+class TaskShare(models.Model):
+    task = models.ForeignKey(Task, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    can_edit = models.BooleanField(default=False)
+    shared_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        unique_together = ('task', 'user')
