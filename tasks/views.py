@@ -94,49 +94,6 @@ class TaskViewSet(viewsets.ModelViewSet):
             'detail': f'Invite sent to {username}'
         })
 
-    # =========================
-    # ACCEPT INVITE
-    # =========================
-
-    @action(detail=True, methods=['post'])
-    def accept_invite(self, request, pk=None):
-
-        task = self.get_object()
-
-        share = get_object_or_404(
-            TaskShare,
-            task=task,
-            user=request.user
-        )
-
-        share.accepted = True
-        share.save()
-
-        return Response({
-            'detail': 'Invite accepted'
-        })
-
-    # =========================
-    # DECLINE INVITE
-    # =========================
-
-    @action(detail=True, methods=['post'])
-    def decline_invite(self, request, pk=None):
-
-        task = self.get_object()
-
-        share = get_object_or_404(
-            TaskShare,
-            task=task,
-            user=request.user
-        )
-
-        share.accepted = False
-        share.save()
-
-        return Response({
-            'detail': 'Invite declined'
-        })
 
 # =========================
 # PUBLIC SHARE: clona a tarefa para um usuário específico, criando uma nova tarefa idêntica, mas de propriedade do usuário que a clonou. A tarefa original permanece inalterada e privada.
@@ -182,9 +139,52 @@ class CategoryViewSet(viewsets.ModelViewSet):
     def perform_create(self, serializer):
         serializer.save(owner=self.request.user)
 
-class TaskShareViewSet(viewsets.ModelViewSet):
+class TaskSharedViewSet(viewsets.ModelViewSet):
     serializer_class = TaskShareSerializer
     permission_classes = [permissions.IsAuthenticated]
 
     def get_queryset(self):
         return TaskShare.objects.filter(Q(task__owner=self.request.user))
+    
+class TaskReceivedShareViewSet(viewsets.ModelViewSet):
+    serializer_class = TaskShareSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get_queryset(self):
+        return TaskShare.objects.filter(Q(user=self.request.user))
+    
+    @action(detail=True, methods=['post'])
+    def accept(self, request, pk=None):
+
+        share = self.get_object()
+
+        if share.user != request.user:
+            return Response(
+                {'detail': 'Permission denied'},
+                status=status.HTTP_403_FORBIDDEN
+            )
+
+        share.accepted = True
+        share.save()
+
+        return Response({
+            'detail': 'Invite accepted'
+        })
+    
+    @action(detail=True, methods=['post'])
+    def decline(self, request, pk=None):
+
+        share = self.get_object()
+
+        if share.user != request.user:
+            return Response(
+                {'detail': 'Permission denied'},
+                status=status.HTTP_403_FORBIDDEN
+            )
+
+        share.accepted = False
+        share.save()
+
+        return Response({
+            'detail': 'Invite declined'
+        })

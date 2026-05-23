@@ -1,16 +1,18 @@
 from django.urls import path
-from .views import RegisterViewSet, TaskViewSet, CategoryViewSet, Clone_public_task, TaskShareViewSet
+from .views import RegisterViewSet, TaskViewSet, CategoryViewSet, Clone_public_task, TaskSharedViewSet, TaskReceivedShareViewSet
 
 urlpatterns = [
     path('register/', RegisterViewSet.as_view({'post': 'create'}), name='register'),
     path('tasks/', TaskViewSet.as_view({'get': 'list', 'post': 'create'}), name='task-list'),
     path('tasks/<int:pk>/', TaskViewSet.as_view({'get': 'retrieve', 'patch': 'update', 'delete': 'destroy'}), name='task-detail'),
     path('tasks/<int:pk>/invite/', TaskViewSet.as_view({'post': 'invite'}), name='task-invite'),
-    path('tasks/<int:pk>/accept_invite/', TaskViewSet.as_view({'post': 'accept_invite'}), name='task-accept-invite'),
-    path('tasks/<int:pk>/decline_invite/', TaskViewSet.as_view({'post': 'decline_invite'}), name='task-decline-invite'),
     path('public/tasks/<uuid:share_code>/clone/', Clone_public_task, name='clone-public-task'),
     path('categories/', CategoryViewSet.as_view({'get': 'list', 'post': 'create'}), name='category-list'),
     path('categories/<int:pk>/', CategoryViewSet.as_view({'get': 'retrieve', 'patch': 'update', 'delete': 'destroy'}), name='category-detail'),
-    path('shares/', TaskShareViewSet.as_view({'get': 'list'}), name='share-list'),
-    path('shares/<int:pk>/', TaskShareViewSet.as_view({'get': 'retrieve', 'patch': 'update', 'delete': 'destroy'}), name='share-detail'),
+    path('shares/', TaskSharedViewSet.as_view({'get': 'list'}), name='share-list'),
+    path('shares/<int:pk>/', TaskSharedViewSet.as_view({'get': 'retrieve', 'patch': 'update', 'delete': 'destroy'}), name='share-detail'),
+    path('received-shares/', TaskReceivedShareViewSet.as_view({'get': 'list'}), name='received-shares'),
+    path('received-shares/<int:pk>/', TaskReceivedShareViewSet.as_view({'get': 'retrieve'}), name='received-share-detail'),
+    path('received-shares/<int:pk>/accept/', TaskReceivedShareViewSet.as_view({'post': 'accept'}), name='accept-share'),
+    path('received-shares/<int:pk>/decline/', TaskReceivedShareViewSet.as_view({'post': 'decline'}), name='decline-share'),
 ]
