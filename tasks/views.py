@@ -28,3 +28,12 @@ class TaskViewSet(viewsets.ModelViewSet):
         if task.owner != self.request.user and not TaskShare.objects.filter(task=task, user=self.request.user, can_edit=True).exists():
             raise permissions.PermissionDenied("You do not have permission to edit this task.")
         serializer.save()
+
+class CategoryViewSet(viewsets.ModelViewSet):
+    serializer_class = CategorySerializer
+
+    def get_queryset(self):
+        return Category.objects.filter(owner=self.request.user)
+    
+    def perform_create(self, serializer):
+        serializer.save(owner=self.request.user)

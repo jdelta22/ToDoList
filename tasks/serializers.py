@@ -37,9 +37,9 @@ class TaskSerializer(serializers.ModelSerializer):
 class CategorySerializer(serializers.ModelSerializer):
     class Meta:
         model = Category
-        fields = '__all__'
+        fields = ['id', 'name', 'created_at']
 
 class TaskShareSerializer(serializers.ModelSerializer):
     class Meta:
         model = TaskShare
-        fields = '__all__'
+        fields = ['id', 'task', 'user', 'can_edit', 'shared_at']
