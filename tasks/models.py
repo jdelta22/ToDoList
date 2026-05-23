@@ -7,7 +7,7 @@ class Category(models.Model):
     owner = models.ForeignKey(User, on_delete=models.CASCADE, related_name='categories')
     name = models.CharField(max_length=255)
     created_at = models.DateTimeField(auto_now_add=True)
-
+    color = models.CharField(max_length=7, blank=True)
     class Meta:
         unique_together = ('owner', 'name')
     def __str__(self):
@@ -34,7 +34,7 @@ class Task(models.Model):
 class TaskCategory(models.Model):
     task = models.ForeignKey(Task, on_delete=models.CASCADE)
     category = models.ForeignKey(Category, on_delete=models.CASCADE)
-    color = models.CharField(max_length=7, default='#FFFFFF')
+    
     created_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:
