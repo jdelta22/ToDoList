@@ -151,7 +151,8 @@ class TaskReceivedShareViewSet(viewsets.ModelViewSet):
     permission_classes = [permissions.IsAuthenticated]
 
     def get_queryset(self):
-        return TaskShare.objects.filter(Q(user=self.request.user))
+        return TaskShare.objects.filter(Q(user=self.request.user)).exclude(
+        accepted=False)
     
     @action(detail=True, methods=['post'])
     def accept(self, request, pk=None):
