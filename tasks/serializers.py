@@ -68,6 +68,8 @@ class CategorySerializer(serializers.ModelSerializer):
         fields = ['id', 'name', 'color', 'created_at']
 
 class TaskShareSerializer(serializers.ModelSerializer):
+    task = TaskSerializer(read_only=True)
+    user = serializers.CharField(source='user.username',read_only=True)
     class Meta:
         model = TaskShare
-        fields = ['id', 'task', 'user', 'can_edit', 'shared_at']
+        fields = ['id', 'task', 'user', 'can_edit', 'invited_at', 'accepted', 'completed']

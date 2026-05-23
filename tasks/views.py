@@ -172,6 +172,7 @@ def Clone_public_task(request, share_code):
     })
     
 class CategoryViewSet(viewsets.ModelViewSet):
+
     serializer_class = CategorySerializer
     permission_classes = [permissions.IsAuthenticated]
 
@@ -180,3 +181,10 @@ class CategoryViewSet(viewsets.ModelViewSet):
     
     def perform_create(self, serializer):
         serializer.save(owner=self.request.user)
+
+class TaskShareViewSet(viewsets.ModelViewSet):
+    serializer_class = TaskShareSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get_queryset(self):
+        return TaskShare.objects.filter(Q(task__owner=self.request.user))

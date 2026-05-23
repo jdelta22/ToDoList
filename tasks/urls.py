@@ -1,5 +1,5 @@
 from django.urls import path
-from .views import RegisterViewSet, TaskViewSet, CategoryViewSet, Clone_public_task
+from .views import RegisterViewSet, TaskViewSet, CategoryViewSet, Clone_public_task, TaskShareViewSet
 
 urlpatterns = [
     path('register/', RegisterViewSet.as_view({'post': 'create'}), name='register'),
@@ -11,4 +11,6 @@ urlpatterns = [
     path('public/tasks/<uuid:share_code>/clone/', Clone_public_task, name='clone-public-task'),
     path('categories/', CategoryViewSet.as_view({'get': 'list', 'post': 'create'}), name='category-list'),
     path('categories/<int:pk>/', CategoryViewSet.as_view({'get': 'retrieve', 'patch': 'update', 'delete': 'destroy'}), name='category-detail'),
+    path('shares/', TaskShareViewSet.as_view({'get': 'list'}), name='share-list'),
+    path('shares/<int:pk>/', TaskShareViewSet.as_view({'get': 'retrieve', 'patch': 'update', 'delete': 'destroy'}), name='share-detail'),
 ]
