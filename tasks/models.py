@@ -1,3 +1,5 @@
+import uuid
+
 from django.db import models
 from django.contrib.auth.models import User
 # Create your models here.
@@ -14,8 +16,11 @@ class Category(models.Model):
         return self.name
 
 class Task(models.Model):
-    owner = models.ForeignKey(User, on_delete=models.CASCADE, related_name='tasks')
-    shared_with = models.ManyToManyField(User, related_name='shared_tasks', through="TaskShare", blank=True)
+    owner = models.ForeignKey(
+        User, 
+        on_delete=models.CASCADE, 
+        related_name='tasks'
+    )
     categories = models.ManyToManyField(
         Category,
         related_name='tasks',
@@ -25,6 +30,11 @@ class Task(models.Model):
     title = models.CharField(max_length=255)
     description = models.TextField(blank=True)
     completed = models.BooleanField(default=False)
+    share_code = models.UUIDField(
+        default=uuid.uuid4,
+        unique=True,
+        editable=False
+    )
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
@@ -39,12 +49,19 @@ class TaskCategory(models.Model):
 
     class Meta:
         unique_together = ('task', 'category')
+    def __str__(self):
+        return f'{self.task} - {self.category}'
 
 class TaskShare(models.Model):
-    task = models.ForeignKey(Task, on_delete=models.CASCADE)
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    task = models.ForeignKey(Task, on_delete=models.CASCADE, related_name='shares')
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='shared_tasks')
     can_edit = models.BooleanField(default=False)
-    shared_at = models.DateTimeField(auto_now_add=True)
+    completed = models.BooleanField(default=False)
+    accepted = models.BooleanField(null=True, default=None) # None = pending, True = accepted, False = rejected
+    invited_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:
         unique_together = ('task', 'user')
+
+    def __str__(self):
+        return f'{self.user} - {self.task} (Edit: {self.can_edit}, Accepted: {self.accepted}, Complete: {self.completed})'

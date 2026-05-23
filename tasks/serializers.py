@@ -23,7 +23,7 @@ class TaskSerializer(serializers.ModelSerializer):
     class Meta:
         model = Task
         fields = [
-            'id', 'title', 'description', 'completed', 'categories', 'created_at', 'updated_at', 'shared_with'
+            'id', 'title', 'description', 'completed', 'categories', 'created_at', 'updated_at', 'share_code'
         ]
     def create(self, validated_data):
         categories = validated_data.pop('categories', [])
