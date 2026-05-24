@@ -4,6 +4,8 @@ import Sidebar from "../components/layout/Sidebar"
 import TaskForm from "../components/tasks/TaskForm"
 import TaskCard from "../components/tasks/TaskCard"
 import EditTaskModal from "../components/tasks/EditTaskModal"
+import TaskFilters from "../components/tasks/TaskFilters"
+import TaskPagination from "../components/tasks/TaskPagination"
 
 import api from "../services/api"
 
@@ -14,6 +16,17 @@ function Dashboard() {
   const [tasks, setTasks] = useState([])
   const [categories, setCategories] = useState([])
   const [editingTask, setEditingTask] = useState(null)
+
+  const [search, setSearch] = useState("")
+  const [status, setStatus] = useState("all")
+
+  const [page, setPage] = useState(1)
+
+  const [pagination, setPagination] = useState({
+    count: 0,
+    next: null,
+    previous: null,
+  })
 
   async function fetchCategories() {
     try {
@@ -51,12 +64,27 @@ function Dashboard() {
   }
 
   async function fetchTasks() {
-
     try {
 
-      const response = await api.get("/tasks/")
+      let url = `/tasks/?page=${page}`
 
-      setTasks(response.data)
+      if (search) {
+        url += `&search=${search}`
+      }
+
+      if (status !== "all") {
+        url += `&completed=${status}`
+      }
+
+      const response = await api.get(url)
+
+      setTasks(response.data.results)
+
+      setPagination({
+        count: response.data.count,
+        next: response.data.next,
+        previous: response.data.previous,
+      })
 
     } catch (error) {
       console.log(error)
@@ -66,7 +94,7 @@ function Dashboard() {
   useEffect(() => {
     fetchTasks()
     fetchCategories()
-  }, [])
+  }, [search, status, page])
 
   async function createTask(taskData) {
 
@@ -137,6 +165,14 @@ function Dashboard() {
           onClose={() => setEditingTask(null)}
           onSave={updateTask}
         />
+
+        <TaskFilters
+          search={search}
+          setSearch={setSearch}
+          status={status}
+          setStatus={setStatus}
+        />
+
         <div className="tasks-container">
 
           {tasks.map((task) => (
@@ -151,7 +187,11 @@ function Dashboard() {
 
         </div>
 
-       
+        <TaskPagination
+          pagination={pagination}
+          page={page}
+          setPage={setPage}
+        />
         
 
       </main>
