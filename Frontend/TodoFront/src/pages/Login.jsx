@@ -1,7 +1,32 @@
-import { Link } from "react-router-dom"
+import { useState, useContext } from "react"
+import { Link, useNavigate } from "react-router-dom"
+
 import "../styles/login.css"
+import api from "../services/api"
+import { AuthContext } from "../context/AuthContext"
 
 function Login() {
+
+  const navigate = useNavigate()
+  const { login } = useContext(AuthContext)
+  const [username, setUsername] = useState("")
+  const [password, setPassword] = useState("")
+
+  async function handleLogin(e) {
+    e.preventDefault()
+    try {
+      const response = await api.post("/token/", { username, password })
+      login(response.data.access)
+      navigate("/dashboard")
+
+    } catch (error) {
+      alert("Login falhou. Verifique suas credenciais.")
+    }
+  } 
+
+
+
+
   return (
     <div className="auth-container">
 
@@ -11,18 +36,23 @@ function Login() {
           Login
         </h1>
 
-        <form className="auth-form">
+        <form className="auth-form" onSubmit={handleLogin}>
 
           <input
-            type="email"
-            placeholder="Email"
+            type="text"
+            placeholder="Nome de usuário"
             className="auth-input"
+            value={username}
+            onChange={(e) => setUsername(e.target.value)}
           />
+          
 
           <input
             type="password"
             placeholder="Senha"
             className="auth-input"
+            value={password}
+            onChange={(e)=> setPassword(e.target.value)}
           />
 
           <button className="auth-button">
