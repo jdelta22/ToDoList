@@ -6,6 +6,8 @@ from rest_framework.decorators import action
 from rest_framework.response import Response
 from django.db.models import Q
 from django.shortcuts import get_object_or_404
+from django_filters.rest_framework import DjangoFilterBackend
+from rest_framework.filters import SearchFilter
 
 from .models import Task, Category, TaskShare
 from .serializers import RegisterSerializer, TaskSerializer, CategorySerializer, TaskShareSerializer
@@ -20,6 +22,19 @@ class RegisterViewSet(viewsets.ModelViewSet):
 class TaskViewSet(viewsets.ModelViewSet):
     serializer_class = TaskSerializer
     permission_classes = [permissions.IsAuthenticated]
+    filter_backends = [
+        DjangoFilterBackend,
+        SearchFilter,
+    ]
+
+    filterset_fields = [
+        'completed',
+    ]
+
+    search_fields = [
+        'title',
+        'description',
+]
 
     def get_queryset(self):
         user = self.request.user
