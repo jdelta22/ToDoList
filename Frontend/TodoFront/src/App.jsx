@@ -5,6 +5,9 @@ import Home from "./pages/Home"
 import Login from "./pages/Login"
 import Register from "./pages/Register"
 import Dashboard from "./pages/Dashboard"
+import SharedTasks from "./pages/SharedTasks"
+import ReceivedTasks from "./pages/ReceivedTasks"
+
 
 import PrivateRoute from "./routes/PrivateRoute"
 
@@ -21,6 +24,24 @@ function App() {
             <Dashboard />
           </PrivateRoute>
         } />
+        <Route
+          path="/shared"
+          element={
+            <PrivateRoute>
+              <SharedTasks />
+            </PrivateRoute>
+          }
+        />
+
+        <Route
+          path="/received"
+          element={
+            <PrivateRoute>
+              <ReceivedTasks />
+            </PrivateRoute>
+          }
+        />
+
       </Routes>
       
     </BrowserRouter>
