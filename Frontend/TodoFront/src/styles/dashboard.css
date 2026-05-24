@@ -1,0 +1,17 @@
+@reference "tailwindcss";
+
+.dashboard-container {
+  @apply flex;
+}
+
+.dashboard-content {
+  @apply flex-1 p-8 bg-gray-100 min-h-screen;
+}
+
+.dashboard-title {
+  @apply text-3xl font-bold mb-6;
+}
+
+.tasks-container {
+  @apply flex flex-col gap-4;
+}

@@ -1,0 +1,61 @@
+@reference "tailwindcss";
+
+.task-card {
+  @apply bg-white rounded-2xl shadow-md p-6 flex flex-col gap-5;
+}
+
+.task-header {
+  @apply flex items-start justify-between gap-4;
+}
+
+.task-title {
+  @apply text-xl font-bold text-gray-800;
+}
+
+.task-completed {
+  @apply line-through text-gray-400;
+}
+
+.task-description {
+  @apply text-gray-600 mt-2;
+}
+
+.task-status {
+  @apply flex items-center;
+}
+
+.status-completed {
+  @apply bg-green-100 text-green-700 text-sm px-3 py-1 rounded-full font-medium;
+}
+
+.status-pending {
+  @apply bg-yellow-100 text-yellow-700 text-sm px-3 py-1 rounded-full font-medium;
+}
+
+.task-categories {
+  @apply flex flex-wrap gap-2;
+}
+
+.category-badge {
+  @apply text-white text-sm px-3 py-1 rounded-full font-medium;
+}
+
+.task-actions {
+  @apply flex flex-wrap gap-3 pt-2 border-t border-gray-200;
+}
+
+.complete-button {
+  @apply bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition;
+}
+
+.edit-button {
+  @apply bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition;
+}
+
+.share-button {
+  @apply bg-purple-600 text-white px-4 py-2 rounded-lg hover:bg-purple-700 transition;
+}
+
+.delete-button {
+  @apply bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700 transition;
+}

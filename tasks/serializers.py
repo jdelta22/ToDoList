@@ -16,14 +16,31 @@ class RegisterSerializer(serializers.ModelSerializer):
         )
         return user
 
+class CategorySerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Category
+        fields = ['id', 'name', 'color', 'created_at']
+
+
 class TaskSerializer(serializers.ModelSerializer):
     title = serializers.CharField(required=False)
-    categories = serializers.PrimaryKeyRelatedField(many=True, queryset=Category.objects.all(), required=False)
+    categories = CategorySerializer(
+        many=True,
+        read_only=True
+    )
+
+    category_ids = serializers.PrimaryKeyRelatedField(
+        queryset=Category.objects.all(),
+        many=True,
+        write_only=True,
+        source='categories',
+        required=False
+    )
 
     class Meta:
         model = Task
         fields = [
-            'id', 'title', 'description', 'completed', 'categories', 'created_at', 'updated_at', 'share_code'
+            'id', 'title', 'description', 'completed', 'categories', 'category_ids', 'created_at', 'updated_at', 'share_code'
         ]
     def create(self, validated_data):
         categories = validated_data.pop('categories', [])
@@ -62,10 +79,6 @@ class TaskSerializer(serializers.ModelSerializer):
                 raise serializers.ValidationError(f"Category '{category.name}' does not belong to the user.")
         return value
     
-class CategorySerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Category
-        fields = ['id', 'name', 'color', 'created_at']
 
 class TaskShareSerializer(serializers.ModelSerializer):
     task = TaskSerializer(read_only=True)

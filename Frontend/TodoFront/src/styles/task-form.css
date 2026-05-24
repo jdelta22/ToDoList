@@ -1,0 +1,45 @@
+@reference "tailwindcss";
+
+.task-form {
+  @apply bg-white p-6 rounded-2xl shadow-md mb-6 flex flex-col gap-5;
+}
+
+.form-group {
+  @apply flex flex-col gap-2;
+}
+
+.form-label {
+  @apply text-sm font-semibold text-gray-700;
+}
+
+.task-input {
+  @apply border border-gray-300 rounded-lg p-3 outline-none focus:ring-2 focus:ring-blue-500;
+}
+
+.task-textarea {
+  @apply border border-gray-300 rounded-lg p-3 min-h-28 resize-none outline-none focus:ring-2 focus:ring-blue-500;
+}
+
+.task-select {
+  @apply border border-gray-300 rounded-lg p-3 min-h-32 outline-none focus:ring-2 focus:ring-blue-500;
+}
+
+.task-button {
+  @apply bg-blue-600 text-white py-3 rounded-lg hover:bg-blue-700 transition font-semibold;
+}
+
+.categories-container {
+  @apply flex flex-wrap gap-3;
+}
+
+.category-option {
+  @apply px-4 py-2 rounded-full border border-gray-300 bg-white text-gray-700 transition cursor-pointer;
+}
+
+.category-option:hover {
+  @apply border-blue-500 text-blue-600;
+}
+
+.category-selected {
+  @apply bg-blue-600 text-white border-blue-600;
+}
