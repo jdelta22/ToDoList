@@ -1,0 +1,29 @@
+@reference "tailwindcss";
+
+.home-container {
+  @apply min-h-screen bg-gray-100 flex items-center justify-center px-6;
+}
+
+.home-content {
+  @apply max-w-3xl text-center;
+}
+
+.home-title {
+  @apply text-5xl font-bold text-gray-900 mb-6;
+}
+
+.home-description {
+  @apply text-lg text-gray-600 mb-8;
+}
+
+.home-buttons {
+  @apply flex justify-center gap-4;
+}
+
+.primary-button {
+  @apply bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition;
+}
+
+.secondary-button {
+  @apply bg-gray-800 text-white px-6 py-3 rounded-lg hover:bg-gray-900 transition;
+}
