@@ -5,6 +5,11 @@ function TaskFilters({
   setSearch,
   status,
   setStatus,
+  category,
+  setCategory,
+  ordering,
+  setOrdering,
+  categories,
 }) {
 
   return (
@@ -38,6 +43,57 @@ function TaskFilters({
 
         <option value="false">
           Pendentes
+        </option>
+
+      </select>
+
+      <select
+        value={category}
+        onChange={(e) =>
+          setCategory(e.target.value)
+        }
+        className="filter-select"
+      >
+
+        <option value="all">
+          Todas categorias
+        </option>
+
+        {categories.map((category) => (
+
+          <option
+            key={category.id}
+            value={category.id}
+          >
+            {category.name}
+          </option>
+
+        ))}
+
+      </select>
+
+      <select
+        value={ordering}
+        onChange={(e) =>
+          setOrdering(e.target.value)
+        }
+        className="filter-select"
+      >
+
+        <option value="-created_at">
+          Mais recentes
+        </option>
+
+        <option value="created_at">
+          Mais antigas
+        </option>
+
+        <option value="title">
+          A-Z
+        </option>
+
+        <option value="-title">
+          Z-A
         </option>
 
       </select>

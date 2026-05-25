@@ -1,60 +1,137 @@
 import { useEffect, useState } from "react"
+
 import api from "../services/api"
 
 import Sidebar from "../components/layout/Sidebar"
 import SharedTaskCard from "../components/shared/SharedTaskCard"
+import TaskFilters from "../components/tasks/TaskFilters"
+import TaskPagination from "../components/tasks/TaskPagination"
 
-import "../styles/shared-page.css"
+function SharedTasks() {
 
-function SharedPage() {
+  const [tasks, setTasks] = useState([])
+  const [categories, setCategories] = useState([])
 
-    const [tasks, setTasks] = useState([])
+  const [search, setSearch] = useState("")
+  const [status, setStatus] = useState("all")
+  const [category, setCategory] = useState("all")
+  const [ordering, setOrdering] = useState("-created_at")
 
-    async function loadTasks() {
+  const [page, setPage] = useState(1)
 
-        try {
+  const [pagination, setPagination] = useState({
+    count: 0,
+    next: null,
+    previous: null,
+  })
 
-            const response = await api.get(
-                "/shares/"
-            )
+  async function fetchCategories() {
 
-            setTasks(response.data.results)
+    try {
 
-        } catch (error) {
-            console.log(error)
-        }
+      const response = await api.get("/categories/")
+
+      setCategories(response.data)
+
+    } catch (error) {
+      console.log(error)
     }
+  }
 
-    useEffect(() => {
-        loadTasks()
-    }, [])
+  async function fetchTasks() {
 
-    return (
-        <div className="dashboard-container">
+    try {
 
-            <Sidebar />
+      let url = `/shares/?page=${page}`
 
-            <main className="dashboard-content">
+      if (search) {
+        url += `&search=${search}`
+      }
 
-                <h1 className="dashboard-title">
-                    Compartilhadas por mim
-                </h1>
+      if (status !== "all") {
+        url += `&shares__completed=${status}`
+      }
 
-                <div className="shared-tasks-container">
+      if (category !== "all") {
+        url += `&categories=${category}`
+      }
 
-                    {tasks.map((task) => (
-                        <SharedTaskCard
-                            key={task.id}
-                            task={task}
-                        />
-                    ))}
+      if (ordering) {
+        url += `&ordering=${ordering}`
+      }
 
-                </div>
+      const response = await api.get(url)
 
-            </main>
+      setTasks(response.data.results)
+
+      setPagination({
+        count: response.data.count,
+        next: response.data.next,
+        previous: response.data.previous,
+      })
+
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
+  useEffect(() => {
+
+    fetchTasks()
+    fetchCategories()
+
+  }, [
+    search,
+    status,
+    category,
+    ordering,
+    page,
+  ])
+
+  return (
+    <div className="dashboard-container">
+
+      <Sidebar />
+
+      <main className="dashboard-content">
+
+        <h1 className="dashboard-title">
+          Compartilhadas por mim
+        </h1>
+
+        <TaskFilters
+          search={search}
+          setSearch={setSearch}
+          status={status}
+          setStatus={setStatus}
+          category={category}
+          setCategory={setCategory}
+          ordering={ordering}
+          setOrdering={setOrdering}
+          categories={categories}
+        />
+
+        <div className="shared-tasks-container">
+
+          {tasks.map((task) => (
+            <SharedTaskCard
+              key={task.id}
+              task={task}
+            />
+          ))}
 
         </div>
-    )
+
+        <TaskPagination
+          pagination={pagination}
+          page={page}
+          setPage={setPage}
+        />
+
+      </main>
+
+    </div>
+  )
 }
 
-export default SharedPage
+export default SharedTasks

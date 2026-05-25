@@ -8,6 +8,7 @@ from django.db.models import Q
 from django.shortcuts import get_object_or_404
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.filters import SearchFilter
+from rest_framework.filters import OrderingFilter
 
 from .models import Task, Category, TaskShare
 from .serializers import RegisterSerializer, TaskSerializer, CategorySerializer, TaskShareSerializer, SharedTaskSerializer
@@ -25,16 +26,23 @@ class TaskViewSet(viewsets.ModelViewSet):
     filter_backends = [
         DjangoFilterBackend,
         SearchFilter,
+        OrderingFilter,
     ]
 
     filterset_fields = [
         'completed',
+        'categories',
     ]
 
     search_fields = [
         'title',
         'description',
-]
+    ]
+    ordering_fields = [
+        'created_at',
+        'title',
+    ]
+    
 
     def get_queryset(self):
         user = self.request.user
@@ -235,6 +243,27 @@ class SharedByMeViewSet(viewsets.ReadOnlyModelViewSet):
 
     serializer_class = SharedTaskSerializer
     permission_classes = [permissions.IsAuthenticated]
+    filter_backends = [
+        DjangoFilterBackend,
+        SearchFilter,
+        OrderingFilter,
+    ]
+    filterset_fields = [
+        'shares__completed',
+        'is_public',
+        'categories',
+    ]
+
+    search_fields = [
+        'title',
+        'description',
+    ]
+    ordering_fields = [
+        'created_at',
+        'updated_at',
+        'title',
+    ]
+    ordering = ['-created_at']
 
     def get_queryset(self):
 
@@ -244,15 +273,37 @@ class SharedByMeViewSet(viewsets.ReadOnlyModelViewSet):
         ).prefetch_related(
             'shares__user',
             'categories',
-        ).distinct()
+        ).distinct().order_by('-created_at')
 
 class TaskReceivedShareViewSet(viewsets.ModelViewSet):
     serializer_class = TaskShareSerializer
     permission_classes = [permissions.IsAuthenticated]
+    filter_backends = [
+        DjangoFilterBackend,
+        SearchFilter,
+        OrderingFilter,
+    ]
+
+    filterset_fields = [
+        'accepted',
+        'task__categories',
+        'task__owner',
+    ]
+
+    search_fields = [
+        'task__title',
+        'task__description',
+    ]
+    ordering_fields = [
+        'task__created_at',
+        'task__updated_at',
+    ]
+    ordering = ['-task__created_at']
+
 
     def get_queryset(self):
         return TaskShare.objects.filter(Q(user=self.request.user)).exclude(
-        accepted=False)
+        accepted=False).order_by('-task__created_at')
     
     @action(detail=True, methods=['post'])
     def accept(self, request, pk=None):

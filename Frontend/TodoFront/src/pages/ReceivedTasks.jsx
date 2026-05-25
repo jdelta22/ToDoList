@@ -3,26 +3,84 @@ import { useEffect, useState } from "react"
 import api from "../services/api"
 
 import Sidebar from "../components/layout/Sidebar"
-
-import "../styles/dashboard.css"
+import TaskFilters from "../components/tasks/TaskFilters"
+import TaskPagination from "../components/tasks/TaskPagination"
 
 function ReceivedTasks() {
 
   const [shares, setShares] = useState([])
+  const [categories, setCategories] = useState([])
+
+  const [search, setSearch] = useState("")
+  const [status, setStatus] = useState("all")
+  const [category, setCategory] = useState("all")
+  const [ordering, setOrdering] = useState("-created_at")
+
+  const [page, setPage] = useState(1)
+
+  const [pagination, setPagination] = useState({
+    count: 0,
+    next: null,
+    previous: null,
+  })
 
   useEffect(() => {
     fetchShares()
-  }, [])
+    fetchCategories()
+  }, [
+    search,
+    status,
+    category,
+    ordering,
+    page,
+  ])
+
+  async function fetchCategories() {
+
+    try {
+
+      const response = await api.get(
+        "/categories/"
+      )
+
+      setCategories(response.data)
+
+    } catch (error) {
+      console.log(error)
+    }
+  }
 
   async function fetchShares() {
 
     try {
 
-      const response = await api.get(
-        "/received-shares/"
-      )
+      let url = `/received-shares/?page=${page}`
+
+      if (search) {
+        url += `&search=${search}`
+      }
+
+      if (status !== "all") {
+        url += `&completed=${status}`
+      }
+
+      if (category !== "all") {
+        url += `&task__categories=${category}`
+      }
+
+      if (ordering) {
+        url += `&ordering=${ordering}`
+      }
+
+      const response = await api.get(url)
 
       setShares(response.data.results)
+
+      setPagination({
+        count: response.data.count,
+        next: response.data.next,
+        previous: response.data.previous,
+      })
 
     } catch (error) {
       console.log(error)
@@ -67,16 +125,7 @@ function ReceivedTasks() {
         `/received-shares/${shareId}/toggle-complete/`
       )
 
-      setShares((prevShares) =>
-        prevShares.map((share) =>
-          share.id === shareId
-            ? {
-                ...share,
-                completed: !share.completed,
-              }
-            : share
-        )
-      )
+      fetchShares()
 
     } catch (error) {
       console.log(error)
@@ -94,16 +143,28 @@ function ReceivedTasks() {
           Compartilhadas comigo
         </h1>
 
+        <TaskFilters
+          search={search}
+          setSearch={setSearch}
+          status={status}
+          setStatus={setStatus}
+          category={category}
+          setCategory={setCategory}
+          ordering={ordering}
+          setOrdering={setOrdering}
+          categories={categories}
+        />
+
         <div className="tasks-container">
 
           {shares.map((share) => (
 
             <div
               key={share.id}
-              className="bg-white rounded-2xl p-5 shadow-sm border border-gray-100"
+              className="bg-white rounded-2xl shadow p-5 border border-gray-100"
             >
 
-              <div className="flex items-start justify-between gap-4">
+              <div className="flex items-start justify-between mb-3">
 
                 <div>
 
@@ -111,39 +172,37 @@ function ReceivedTasks() {
                     {share.task.title}
                   </h2>
 
-                  <p className="text-gray-600 mt-2">
-                    {share.task.description}
+                  <p className="text-gray-500 text-sm">
+                    Compartilhado por {share.task.owner}
                   </p>
 
                 </div>
 
-                <div>
-
-                  {share.completed ? (
-
-                    <span className="bg-green-100 text-green-700 text-xs font-bold px-3 py-1 rounded-full">
-                      Concluída
-                    </span>
-
-                  ) : (
-
-                    <span className="bg-yellow-100 text-yellow-700 text-xs font-bold px-3 py-1 rounded-full">
-                      Pendente
-                    </span>
-
-                  )}
-
-                </div>
+                <span
+                  className={`px-3 py-1 rounded-full text-xs font-semibold ${
+                    share.completed
+                      ? "bg-green-100 text-green-700"
+                      : "bg-yellow-100 text-yellow-700"
+                  }`}
+                >
+                  {share.completed
+                    ? "Concluída"
+                    : "Pendente"}
+                </span>
 
               </div>
 
-              <div className="mt-4 flex flex-wrap gap-2">
+              <p className="text-gray-600 mb-4">
+                {share.task.description}
+              </p>
+
+              <div className="flex flex-wrap gap-2 mb-4">
 
                 {share.task.categories.map((category) => (
 
                   <span
                     key={category.id}
-                    className="text-white text-xs font-medium px-3 py-1 rounded-full"
+                    className="text-white text-xs px-3 py-1 rounded-full"
                     style={{
                       backgroundColor: category.color
                     }}
@@ -155,48 +214,31 @@ function ReceivedTasks() {
 
               </div>
 
-              <div className="mt-4 flex flex-col gap-2 text-sm text-gray-600">
+              <div className="flex flex-wrap gap-2 mb-4">
 
-                <p>
-                  Compartilhado por:
-                  {" "}
-                  <strong>{share.user}</strong>
-                </p>
+                <span className="px-3 py-1 rounded-full bg-blue-100 text-blue-700 text-xs font-semibold">
+                  {share.can_edit
+                    ? "Pode editar"
+                    : "Somente leitura"}
+                </span>
 
-                <p>
-                  Permissão:
-                  {" "}
-
-                  <strong>
-                    {share.can_edit
-                      ? "Edição"
-                      : "Somente leitura"}
-                  </strong>
-
-                </p>
-
-                <p>
-                  Status:
-                  {" "}
-
-                  <strong>
-
-                    {share.accepted === null &&
-                      "Pendente"}
-
-                    {share.accepted === true &&
-                      "Aceito"}
-
-                    {share.accepted === false &&
-                      "Recusado"}
-
-                  </strong>
-
-                </p>
+                <span
+                  className={`px-3 py-1 rounded-full text-xs font-semibold ${
+                    share.accepted === true
+                      ? "bg-green-100 text-green-700"
+                      : share.accepted === false
+                      ? "bg-red-100 text-red-700"
+                      : "bg-yellow-100 text-yellow-700"
+                  }`}
+                >
+                  {share.accepted === true && "Aceito"}
+                  {share.accepted === false && "Recusado"}
+                  {share.accepted === null && "Pendente"}
+                </span>
 
               </div>
 
-              <div className="mt-5 flex flex-wrap gap-3 items-center">
+              <div className="flex gap-3 flex-wrap">
 
                 {share.accepted === null && (
                   <>
@@ -204,7 +246,7 @@ function ReceivedTasks() {
                       onClick={() =>
                         acceptInvite(share.id)
                       }
-                      className="bg-emerald-500 hover:bg-emerald-600 text-white px-4 py-2 rounded-xl transition font-medium"
+                      className="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-lg transition"
                     >
                       Aceitar
                     </button>
@@ -213,7 +255,7 @@ function ReceivedTasks() {
                       onClick={() =>
                         declineInvite(share.id)
                       }
-                      className="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-xl transition font-medium"
+                      className="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg transition"
                     >
                       Recusar
                     </button>
@@ -221,21 +263,20 @@ function ReceivedTasks() {
                 )}
 
                 {share.accepted === true && (
-
-                  <label className="flex items-center gap-2 text-sm font-medium text-gray-700">
-
-                    <input
-                      type="checkbox"
-                      checked={share.completed}
-                      onChange={() =>
-                        toggleComplete(share.id)
-                      }
-                    />
-
-                    Concluída
-
-                  </label>
-
+                  <button
+                    onClick={() =>
+                      toggleComplete(share.id)
+                    }
+                    className={`px-4 py-2 rounded-lg text-white transition ${
+                      share.completed
+                        ? "bg-yellow-500 hover:bg-yellow-600"
+                        : "bg-green-500 hover:bg-green-600"
+                    }`}
+                  >
+                    {share.completed
+                      ? "Desfazer"
+                      : "Concluir"}
+                  </button>
                 )}
 
               </div>
@@ -245,6 +286,12 @@ function ReceivedTasks() {
           ))}
 
         </div>
+
+        <TaskPagination
+          pagination={pagination}
+          page={page}
+          setPage={setPage}
+        />
 
       </main>
 

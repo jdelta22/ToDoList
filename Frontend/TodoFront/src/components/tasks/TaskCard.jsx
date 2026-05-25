@@ -78,9 +78,11 @@ function TaskCard({
       {!task.is_owner && (
         <div className="shared-info">
 
-          <span className="shared-badge">
-            Compartilhada com você
-          </span>
+          {!task.is_owner && (
+            <p className="text-sm text-gray-500 mt-1">
+              Compartilhado por: {task.owner}
+            </p>
+          )}
 
           <span className="permission-badge">
 

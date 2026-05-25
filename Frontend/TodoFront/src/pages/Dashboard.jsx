@@ -20,6 +20,8 @@ function Dashboard() {
 
   const [search, setSearch] = useState("")
   const [status, setStatus] = useState("all")
+  const [category, setCategory] = useState("")
+  const [ordering, setOrdering] = useState("-created_at")
 
   const [sharingTask, setSharingTask] = useState(null)
 
@@ -55,6 +57,16 @@ function Dashboard() {
       if (search) {
         url += `&search=${search}`
       }
+      if (
+        category &&
+        category !== "all"
+      ) {
+        url += `&categories=${category}`
+      }
+
+      if (ordering) {
+        url += `&ordering=${ordering}`
+      }
 
       if (status !== "all") {
         url += `&completed=${status}`
@@ -80,49 +92,31 @@ function Dashboard() {
     fetchTasks()
     fetchCategories()
 
-  }, [search, status, page])
+  }, [search, status, category, ordering, page,])
 
   async function createTask(taskData) {
-
     try {
-
-      const response = await api.post(
+      await api.post(
         "/tasks/",
         taskData
       )
-
-      setTasks((prev) => [
-        response.data,
-        ...prev,
-      ])
-
+      fetchTasks()
     } catch (error) {
       console.log(error)
     }
   }
 
   async function updateTask(taskData) {
-
-    try {
-
-      const response = await api.patch(
-        `/tasks/${taskData.id}/`,
-        taskData
-      )
-
-      setTasks((prev) =>
-        prev.map((task) =>
-          task.id === taskData.id
-            ? response.data
-            : task
+      try {
+        await api.patch(
+          `/tasks/${taskData.id}/`,
+          taskData
         )
-      )
-
-      setEditingTask(null)
-
-    } catch (error) {
-      console.log(error)
-    }
+        fetchTasks()
+        setEditingTask(null)
+      } catch (error) {
+        console.log(error)
+      }
   }
 
   async function deleteTask(id) {
@@ -131,58 +125,36 @@ function Dashboard() {
 
       await api.delete(`/tasks/${id}/`)
 
-      setTasks((prev) =>
-        prev.filter(
-          (task) => task.id !== id
-        )
-      )
+      fetchTasks()
 
     } catch (error) {
       console.log(error)
     }
   }
 
+
   async function toggleTask(task) {
 
     try {
 
-      // tarefa compartilhada recebida
       if (task.share_id) {
 
-        const response = await api.patch(
+        await api.patch(
           `/received-shares/${task.share_id}/toggle-complete/`
-        )
-
-        setTasks((prev) =>
-          prev.map((item) =>
-            item.id === task.id
-              ? {
-                  ...item,
-                  share_completed:
-                    response.data.completed,
-                }
-              : item
-          )
         )
 
       } else {
 
-        // tarefa própria
-        const response = await api.patch(
+        await api.patch(
           `/tasks/${task.id}/`,
           {
             completed: !task.completed,
           }
         )
 
-        setTasks((prev) =>
-          prev.map((item) =>
-            item.id === task.id
-              ? response.data
-              : item
-          )
-        )
       }
+
+      fetchTasks()
 
     } catch (error) {
       console.log(error)
@@ -225,8 +197,32 @@ function Dashboard() {
         <TaskFilters
           search={search}
           setSearch={setSearch}
+
           status={status}
           setStatus={setStatus}
+
+          category={category}
+          setCategory={setCategory}
+
+          ordering={ordering}
+          setOrdering={setOrdering}
+
+          categories={categories}
+
+          statusOptions={[
+            {
+              value: "all",
+              label: "Todas",
+            },
+            {
+              value: "true",
+              label: "Concluídas",
+            },
+            {
+              value: "false",
+              label: "Pendentes",
+            },
+          ]}
         />
 
         <div className="tasks-container">
