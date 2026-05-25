@@ -1,29 +1,68 @@
+/* shared-page.css */
 @reference "tailwindcss";
 
-.shared-title {
-  @apply text-3xl font-bold text-gray-800 mb-8;
-}
-
-.shared-container {
-  @apply flex flex-col gap-4;
-}
-
 .shared-card {
-  @apply bg-white rounded-2xl shadow-md p-6 flex flex-col gap-3;
+  @apply bg-white rounded-2xl p-5 mb-5 shadow-md border border-gray-100;
 }
 
-.shared-task-title {
-  @apply text-xl font-bold text-gray-800;
+.shared-header {
+  @apply flex justify-between items-center gap-3 flex-wrap;
 }
 
-.shared-user {
-  @apply text-gray-600;
+.public-badge,
+.private-badge,
+.edit-badge,
+.accepted-badge,
+.pending-badge,
+.completed-badge,
+.not-completed-badge {
+  @apply px-3 py-1 rounded-full text-xs font-semibold;
 }
 
-.shared-permission {
-  @apply text-blue-600 font-medium;
+.public-badge {
+  @apply bg-emerald-100 text-emerald-700;
 }
 
-.shared-status {
-  @apply text-sm text-gray-500;
+.private-badge {
+  @apply bg-gray-100 text-gray-700;
+}
+
+.edit-badge {
+  @apply bg-blue-100 text-blue-700;
+}
+
+.accepted-badge {
+  @apply bg-emerald-100 text-emerald-700;
+}
+
+.pending-badge {
+  @apply bg-yellow-100 text-yellow-700;
+}
+
+.completed-badge {
+  @apply bg-indigo-100 text-indigo-700;
+}
+
+.not-completed-badge {
+  @apply bg-red-100 text-red-700;
+}
+
+.shared-user-row {
+  @apply flex justify-between items-center mt-3 gap-3 flex-wrap;
+}
+
+.user-badges {
+  @apply flex gap-2 flex-wrap;
+}
+
+.categories-container {
+  @apply flex gap-2 my-4 flex-wrap;
+}
+
+.category-badge {
+  @apply text-white px-3 py-1 rounded-full text-xs font-medium;
+}
+
+.revoke-button {
+  @apply bg-red-500 hover:bg-red-600 text-white border-none px-3 py-2 rounded-lg cursor-pointer transition text-sm font-medium;
 }

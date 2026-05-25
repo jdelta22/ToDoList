@@ -5,9 +5,8 @@ import api from "../services/api"
 import Sidebar from "../components/layout/Sidebar"
 
 import "../styles/dashboard.css"
-import "../styles/received-shares.css"
 
-function ReceivedShares() {
+function ReceivedTasks() {
 
   const [shares, setShares] = useState([])
 
@@ -101,32 +100,50 @@ function ReceivedShares() {
 
             <div
               key={share.id}
-              className="task-card"
+              className="bg-white rounded-2xl p-5 shadow-sm border border-gray-100"
             >
 
-              <div className="task-header">
+              <div className="flex items-start justify-between gap-4">
 
-                <h2 className="task-title">
-                  {share.task.title}
-                </h2>
+                <div>
 
-                <span className="share-owner">
-                  {share.user}
-                </span>
+                  <h2 className="text-xl font-semibold text-gray-800">
+                    {share.task.title}
+                  </h2>
+
+                  <p className="text-gray-600 mt-2">
+                    {share.task.description}
+                  </p>
+
+                </div>
+
+                <div>
+
+                  {share.completed ? (
+
+                    <span className="bg-green-100 text-green-700 text-xs font-bold px-3 py-1 rounded-full">
+                      Concluída
+                    </span>
+
+                  ) : (
+
+                    <span className="bg-yellow-100 text-yellow-700 text-xs font-bold px-3 py-1 rounded-full">
+                      Pendente
+                    </span>
+
+                  )}
+
+                </div>
 
               </div>
 
-              <p className="task-description">
-                {share.task.description}
-              </p>
-
-              <div className="task-categories">
+              <div className="mt-4 flex flex-wrap gap-2">
 
                 {share.task.categories.map((category) => (
 
                   <span
                     key={category.id}
-                    className="category-badge"
+                    className="text-white text-xs font-medium px-3 py-1 rounded-full"
                     style={{
                       backgroundColor: category.color
                     }}
@@ -138,29 +155,48 @@ function ReceivedShares() {
 
               </div>
 
-              <div className="share-info">
+              <div className="mt-4 flex flex-col gap-2 text-sm text-gray-600">
+
+                <p>
+                  Compartilhado por:
+                  {" "}
+                  <strong>{share.user}</strong>
+                </p>
 
                 <p>
                   Permissão:
                   {" "}
-                  {share.can_edit
-                    ? "Edição"
-                    : "Somente leitura"}
+
+                  <strong>
+                    {share.can_edit
+                      ? "Edição"
+                      : "Somente leitura"}
+                  </strong>
+
                 </p>
 
                 <p>
-                  Status convite:
+                  Status:
                   {" "}
 
-                  {share.accepted === null && "Pendente"}
-                  {share.accepted === true && "Aceito"}
-                  {share.accepted === false && "Recusado"}
+                  <strong>
+
+                    {share.accepted === null &&
+                      "Pendente"}
+
+                    {share.accepted === true &&
+                      "Aceito"}
+
+                    {share.accepted === false &&
+                      "Recusado"}
+
+                  </strong>
 
                 </p>
 
               </div>
 
-              <div className="task-actions">
+              <div className="mt-5 flex flex-wrap gap-3 items-center">
 
                 {share.accepted === null && (
                   <>
@@ -168,7 +204,7 @@ function ReceivedShares() {
                       onClick={() =>
                         acceptInvite(share.id)
                       }
-                      className="accept-button"
+                      className="bg-emerald-500 hover:bg-emerald-600 text-white px-4 py-2 rounded-xl transition font-medium"
                     >
                       Aceitar
                     </button>
@@ -177,7 +213,7 @@ function ReceivedShares() {
                       onClick={() =>
                         declineInvite(share.id)
                       }
-                      className="decline-button"
+                      className="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-xl transition font-medium"
                     >
                       Recusar
                     </button>
@@ -185,7 +221,8 @@ function ReceivedShares() {
                 )}
 
                 {share.accepted === true && (
-                  <label className="complete-checkbox">
+
+                  <label className="flex items-center gap-2 text-sm font-medium text-gray-700">
 
                     <input
                       type="checkbox"
@@ -198,6 +235,7 @@ function ReceivedShares() {
                     Concluída
 
                   </label>
+
                 )}
 
               </div>
@@ -214,4 +252,4 @@ function ReceivedShares() {
   )
 }
 
-export default ReceivedShares
+export default ReceivedTasks

@@ -8,6 +8,7 @@ import Dashboard from "./pages/Dashboard"
 import SharedTasks from "./pages/SharedTasks"
 import ReceivedTasks from "./pages/ReceivedTasks"
 import PublicTaskPage from "./pages/PublicTaskPage"
+import Categories from "./pages/Categories"
 
 
 import PrivateRoute from "./routes/PrivateRoute"
@@ -46,6 +47,15 @@ function App() {
           path="/share/:share_code"
           element={<PublicTaskPage />}
         />
+        <Route
+          path="/categories"
+          element={
+            <PrivateRoute>
+              <Categories />
+            </PrivateRoute>
+          }
+        />
+
       </Routes>
       
     </BrowserRouter>

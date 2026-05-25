@@ -68,6 +68,12 @@ function Sidebar() {
             >
               Recebidas
             </Link>
+            <Link
+              to="/categories"
+              className="hover:text-blue-400 transition"
+            >
+              Categorias
+            </Link>
 
             <button
               onClick={handleLogout}

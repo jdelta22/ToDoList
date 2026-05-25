@@ -36,6 +36,7 @@ class TaskSerializer(serializers.ModelSerializer):
         source='categories',
         required=False
     )
+    owner = serializers.CharField(source='owner.username', read_only=True)
     is_owner = serializers.SerializerMethodField()
     share_completed = serializers.SerializerMethodField()
     can_edit = serializers.SerializerMethodField()
@@ -90,6 +91,7 @@ class TaskSerializer(serializers.ModelSerializer):
             'updated_at',
             'share_code',
             'is_public',
+            'owner',
             'is_owner',
             'share_id',
             'share_completed',

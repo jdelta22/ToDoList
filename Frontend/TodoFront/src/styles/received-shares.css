@@ -1,71 +1,34 @@
+/* received-shares.css */
+@reference "tailwindcss";
 .share-owner {
-  font-size: 14px;
-  color: #6B7280;
-  font-weight: 500;
+  @apply text-sm text-gray-500;
 }
 
 .share-info {
-  margin-top: 14px;
-
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-
-  color: #4B5563;
-  font-size: 14px;
+  @apply mt-3 flex flex-col gap-1.5;
 }
 
 .task-actions {
-  margin-top: 20px;
-
-  display: flex;
-  gap: 12px;
-  flex-wrap: wrap;
-  align-items: center;
+  @apply mt-4 flex items-center gap-3 flex-wrap;
 }
 
 .accept-button,
 .decline-button {
-  padding: 10px 16px;
-
-  border: none;
-  border-radius: 10px;
-
-  cursor: pointer;
-
-  font-weight: 600;
-
-  transition: 0.2s;
+  @apply px-4 py-2 rounded-lg border-none cursor-pointer transition font-medium;
 }
 
 .accept-button {
-  background: #10B981;
-  color: white;
-}
-
-.accept-button:hover {
-  background: #059669;
+  @apply bg-emerald-500 text-white hover:bg-emerald-600;
 }
 
 .decline-button {
-  background: #EF4444;
-  color: white;
-}
-
-.decline-button:hover {
-  background: #DC2626;
+  @apply bg-red-500 text-white hover:bg-red-600;
 }
 
 .complete-checkbox {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-
-  font-weight: 500;
-  color: #374151;
+  @apply flex items-center gap-2 text-sm font-medium text-gray-700;
 }
 
 .complete-checkbox input {
-  width: 16px;
-  height: 16px;
+  @apply w-4 h-4 cursor-pointer;
 }

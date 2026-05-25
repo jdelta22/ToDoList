@@ -1,0 +1,55 @@
+@reference "tailwindcss";
+
+.categories-grid {
+  @apply grid gap-5;
+  grid-template-columns:
+    repeat(auto-fit, minmax(260px, 1fr));
+}
+
+.category-form {
+  @apply bg-white p-5 rounded-2xl shadow-md mb-6 flex gap-3 flex-wrap;
+}
+
+.category-input {
+  @apply flex-1 border border-gray-300 rounded-lg px-4 py-2 outline-none focus:ring-2 focus:ring-blue-400;
+}
+
+.category-color-input {
+  @apply w-14 h-11 rounded-lg cursor-pointer border border-gray-300;
+}
+
+.category-create-button {
+  @apply bg-blue-500 hover:bg-blue-600 text-white px-5 py-2 rounded-lg transition;
+}
+
+.category-card {
+  @apply bg-white rounded-2xl shadow-md p-5 border border-gray-100;
+}
+
+.category-header {
+  @apply flex items-center justify-between;
+}
+
+.category-info {
+  @apply flex items-center gap-3;
+}
+
+.category-color-preview {
+  @apply w-5 h-5 rounded-full;
+}
+
+.category-title {
+  @apply font-semibold text-lg text-gray-800;
+}
+
+.category-actions {
+  @apply flex gap-3 mt-5;
+}
+
+.category-edit-button {
+  @apply bg-yellow-500 hover:bg-yellow-600 text-white px-4 py-2 rounded-lg transition;
+}
+
+.category-delete-button {
+  @apply bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg transition;
+}
