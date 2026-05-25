@@ -1,42 +1,71 @@
 .share-owner {
   font-size: 14px;
-  color: #888;
+  color: #6B7280;
+  font-weight: 500;
 }
 
 .share-info {
-  margin-top: 12px;
+  margin-top: 14px;
+
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: 8px;
+
+  color: #4B5563;
+  font-size: 14px;
 }
 
 .task-actions {
-  margin-top: 16px;
+  margin-top: 20px;
+
   display: flex;
-  gap: 10px;
+  gap: 12px;
+  flex-wrap: wrap;
   align-items: center;
 }
 
 .accept-button,
 .decline-button {
-  padding: 8px 14px;
+  padding: 10px 16px;
+
   border: none;
-  border-radius: 8px;
+  border-radius: 10px;
+
   cursor: pointer;
+
+  font-weight: 600;
+
+  transition: 0.2s;
 }
 
 .accept-button {
-  background: #10b981;
+  background: #10B981;
   color: white;
 }
 
+.accept-button:hover {
+  background: #059669;
+}
+
 .decline-button {
-  background: #ef4444;
+  background: #EF4444;
   color: white;
+}
+
+.decline-button:hover {
+  background: #DC2626;
 }
 
 .complete-checkbox {
   display: flex;
   align-items: center;
   gap: 8px;
+
+  font-weight: 500;
+  color: #374151;
+}
+
+.complete-checkbox input {
+  width: 16px;
+  height: 16px;
 }
