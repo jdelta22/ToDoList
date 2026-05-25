@@ -52,6 +52,7 @@ class TaskCategory(models.Model):
         unique_together = ('task', 'category')
     def __str__(self):
         return f'{self.task} - {self.category}'
+    
 
 class TaskShare(models.Model):
     task = models.ForeignKey(Task, on_delete=models.CASCADE, related_name='shares')

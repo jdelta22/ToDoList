@@ -10,7 +10,7 @@ from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.filters import SearchFilter
 
 from .models import Task, Category, TaskShare
-from .serializers import RegisterSerializer, TaskSerializer, CategorySerializer, TaskShareSerializer
+from .serializers import RegisterSerializer, TaskSerializer, CategorySerializer, TaskShareSerializer, SharedTaskSerializer
 
 # Create your views here.
 
@@ -203,12 +203,49 @@ class CategoryViewSet(viewsets.ModelViewSet):
         serializer.save(owner=self.request.user)
 
 class TaskSharedViewSet(viewsets.ModelViewSet):
+
     serializer_class = TaskShareSerializer
+    permission_classes = [permissions.IsAuthenticated]
+    http_method_names = ['get', 'delete']
+
+    def get_queryset(self):
+
+        return TaskShare.objects.filter(
+            task__owner=self.request.user
+        )
+
+    def destroy(self, request, *args, **kwargs):
+
+        share = self.get_object()
+
+        if share.task.owner != request.user:
+            return Response(
+                {'detail': 'Permission denied'},
+                status=status.HTTP_403_FORBIDDEN
+            )
+
+        share.delete()
+
+        return Response(
+            {'detail': 'Share revoked'},
+            status=status.HTTP_204_NO_CONTENT
+        )
+    
+class SharedByMeViewSet(viewsets.ReadOnlyModelViewSet):
+
+    serializer_class = SharedTaskSerializer
     permission_classes = [permissions.IsAuthenticated]
 
     def get_queryset(self):
-        return TaskShare.objects.filter(Q(task__owner=self.request.user))
-    
+
+        return Task.objects.filter(
+            owner=self.request.user,
+            shares__isnull=False
+        ).prefetch_related(
+            'shares__user',
+            'categories',
+        ).distinct()
+
 class TaskReceivedShareViewSet(viewsets.ModelViewSet):
     serializer_class = TaskShareSerializer
     permission_classes = [permissions.IsAuthenticated]
@@ -251,4 +288,22 @@ class TaskReceivedShareViewSet(viewsets.ModelViewSet):
 
         return Response({
             'detail': 'Invite declined'
+        })
+    
+    @action(detail=True, methods=['patch'])
+    def toggle_complete(self, request, pk=None):
+
+        share = self.get_object()
+
+        if share.user != request.user:
+            return Response(
+                {'detail': 'Permission denied'},
+                status=status.HTTP_403_FORBIDDEN
+            )
+
+        share.completed = not share.completed
+        share.save()
+
+        return Response({
+            'completed': share.completed
         })

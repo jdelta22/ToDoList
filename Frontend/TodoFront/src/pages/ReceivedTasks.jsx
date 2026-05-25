@@ -2,14 +2,18 @@ import { useEffect, useState } from "react"
 
 import api from "../services/api"
 
-import "../styles/received-shares.css"
 import Sidebar from "../components/layout/Sidebar"
 
-function ReceivedSharesPage() {
+import "../styles/dashboard.css"
+import "../styles/received-shares.css"
+
+function ReceivedShares() {
 
   const [shares, setShares] = useState([])
 
-  const [loading, setLoading] = useState(true)
+  useEffect(() => {
+    fetchShares()
+  }, [])
 
   async function fetchShares() {
 
@@ -22,16 +26,11 @@ function ReceivedSharesPage() {
       setShares(response.data.results)
 
     } catch (error) {
-
       console.log(error)
-
-    } finally {
-
-      setLoading(false)
     }
   }
 
-  async function acceptShare(id) {
+  async function acceptInvite(id) {
 
     try {
 
@@ -42,12 +41,11 @@ function ReceivedSharesPage() {
       fetchShares()
 
     } catch (error) {
-
       console.log(error)
     }
   }
 
-  async function declineShare(id) {
+  async function declineInvite(id) {
 
     try {
 
@@ -58,167 +56,162 @@ function ReceivedSharesPage() {
       fetchShares()
 
     } catch (error) {
-
       console.log(error)
     }
   }
 
-  useEffect(() => {
+  async function toggleComplete(shareId) {
 
-    fetchShares()
+    try {
 
-  }, [])
+      await api.patch(
+        `/received-shares/${shareId}/toggle-complete/`
+      )
 
-  const pendingShares = shares.filter(
-    (share) => share.accepted === null
-  )
+      setShares((prevShares) =>
+        prevShares.map((share) =>
+          share.id === shareId
+            ? {
+                ...share,
+                completed: !share.completed,
+              }
+            : share
+        )
+      )
 
-  const acceptedShares = shares.filter(
-    (share) => share.accepted === true
-  )
-
-  if (loading) {
-    return <p>Carregando...</p>
+    } catch (error) {
+      console.log(error)
+    }
   }
 
   return (
-  <div className="dashboard-container">
+    <div className="dashboard-container">
 
-    <Sidebar />
+      <Sidebar />
 
-    <main className="dashboard-content">
+      <main className="dashboard-content">
 
-      <h1 className="received-title">
-        Compartilhadas comigo
-      </h1>
+        <h1 className="dashboard-title">
+          Compartilhadas comigo
+        </h1>
 
-      <section className="received-section">
+        <div className="tasks-container">
 
-        <h2 className="section-title">
-          Convites pendentes
-        </h2>
-
-        {
-          pendingShares.length === 0 && (
-            <p>Nenhum convite pendente.</p>
-          )
-        }
-
-        {
-          pendingShares.map((share) => (
+          {shares.map((share) => (
 
             <div
               key={share.id}
-              className="share-card"
+              className="task-card"
             >
 
-              <h3 className="share-task-title">
-                {share.task.title}
-              </h3>
+              <div className="task-header">
 
-              <p className="share-description">
+                <h2 className="task-title">
+                  {share.task.title}
+                </h2>
+
+                <span className="share-owner">
+                  {share.user}
+                </span>
+
+              </div>
+
+              <p className="task-description">
                 {share.task.description}
               </p>
 
-              <p className="share-owner">
-                Compartilhado por:
-                {" "}
-                {share.user}
-              </p>
+              <div className="task-categories">
 
-              <p className="share-permission">
+                {share.task.categories.map((category) => (
 
-                {
-                  share.can_edit
-                    ? "Pode editar"
-                    : "Somente leitura"
-                }
+                  <span
+                    key={category.id}
+                    className="category-badge"
+                    style={{
+                      backgroundColor: category.color
+                    }}
+                  >
+                    {category.name}
+                  </span>
 
-              </p>
+                ))}
 
-              <div className="share-actions">
+              </div>
 
-                <button
-                  onClick={() =>
-                    acceptShare(share.id)
-                  }
-                  className="accept-button"
-                >
-                  Aceitar
-                </button>
+              <div className="share-info">
 
-                <button
-                  onClick={() =>
-                    declineShare(share.id)
-                  }
-                  className="decline-button"
-                >
-                  Recusar
-                </button>
+                <p>
+                  Permissão:
+                  {" "}
+                  {share.can_edit
+                    ? "Edição"
+                    : "Somente leitura"}
+                </p>
+
+                <p>
+                  Status convite:
+                  {" "}
+
+                  {share.accepted === null && "Pendente"}
+                  {share.accepted === true && "Aceito"}
+                  {share.accepted === false && "Recusado"}
+
+                </p>
+
+              </div>
+
+              <div className="task-actions">
+
+                {share.accepted === null && (
+                  <>
+                    <button
+                      onClick={() =>
+                        acceptInvite(share.id)
+                      }
+                      className="accept-button"
+                    >
+                      Aceitar
+                    </button>
+
+                    <button
+                      onClick={() =>
+                        declineInvite(share.id)
+                      }
+                      className="decline-button"
+                    >
+                      Recusar
+                    </button>
+                  </>
+                )}
+
+                {share.accepted === true && (
+                  <label className="complete-checkbox">
+
+                    <input
+                      type="checkbox"
+                      checked={share.completed}
+                      onChange={() =>
+                        toggleComplete(share.id)
+                      }
+                    />
+
+                    Concluída
+
+                  </label>
+                )}
 
               </div>
 
             </div>
 
-          ))
-        }
+          ))}
 
-      </section>
+        </div>
 
-      <section className="received-section">
+      </main>
 
-        <h2 className="section-title">
-          Tarefas aceitas
-        </h2>
+    </div>
+  )
+}
 
-        {
-          acceptedShares.length === 0 && (
-            <p>Nenhuma tarefa aceita.</p>
-          )
-        }
-
-        {
-          acceptedShares.map((share) => (
-
-            <div
-              key={share.id}
-              className="share-card"
-            >
-
-              <h3 className="share-task-title">
-                {share.task.title}
-              </h3>
-
-              <p className="share-description">
-                {share.task.description}
-              </p>
-
-              <p className="share-owner">
-                Compartilhado por:
-                {" "}
-                {share.user}
-              </p>
-
-              <p className="share-permission">
-
-                {
-                  share.can_edit
-                    ? "Pode editar"
-                    : "Somente leitura"
-                }
-
-              </p>
-
-            </div>
-
-          ))
-        }
-
-      </section>
-
-    </main>
-
-  </div>
-)}
-
-export default ReceivedSharesPage
+export default ReceivedShares

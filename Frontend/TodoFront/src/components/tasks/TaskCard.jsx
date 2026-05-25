@@ -8,6 +8,10 @@ function TaskCard({
   onShare,
 }) {
 
+  const completedStatus = task.is_owner
+    ? task.completed
+    : task.share_completed
+
   return (
     <div className="task-card">
 
@@ -17,7 +21,7 @@ function TaskCard({
 
           <h2
             className={`task-title ${
-              task.completed
+              completedStatus
                 ? "task-completed"
                 : ""
             }`}
@@ -35,7 +39,7 @@ function TaskCard({
 
         <div className="task-status">
 
-          {task.completed ? (
+          {completedStatus ? (
             <span className="status-completed">
               Concluída
             </span>
@@ -71,44 +75,63 @@ function TaskCard({
 
       )}
 
+      {!task.is_owner && (
+        <div className="shared-info">
+
+          <span className="shared-badge">
+            Compartilhada com você
+          </span>
+
+          <span className="permission-badge">
+
+            {task.can_edit
+              ? "Pode editar"
+              : "Somente leitura"}
+
+          </span>
+
+        </div>
+      )}
+
       <div className="task-actions">
 
         <button
-          onClick={() =>
-            onToggle(
-              task.id,
-              task.completed
-            )
-          }
+          onClick={() => onToggle(task)}
           className="complete-button"
         >
-          {task.completed
+          {completedStatus
             ? "Desfazer"
             : "Concluir"}
         </button>
 
-        <button
-          onClick={() => onEdit(task)}
-          className="edit-button"
-        >
-          Editar
-        </button>
+        {(task.is_owner || task.can_edit) && (
+          <button
+            onClick={() => onEdit(task)}
+            className="edit-button"
+          >
+            Editar
+          </button>
+        )}
 
-        <button
-          onClick={() => onShare(task)}
-          className="share-button"
-        >
-          Compartilhar
-        </button>
+        {task.is_owner && (
+          <button
+            onClick={() => onShare(task)}
+            className="share-button"
+          >
+            Compartilhar
+          </button>
+        )}
 
-        <button
-          onClick={() =>
-            onDelete(task.id)
-          }
-          className="delete-button"
-        >
-          Excluir
-        </button>
+        {task.is_owner && (
+          <button
+            onClick={() =>
+              onDelete(task.id)
+            }
+            className="delete-button"
+          >
+            Excluir
+          </button>
+        )}
 
       </div>
 

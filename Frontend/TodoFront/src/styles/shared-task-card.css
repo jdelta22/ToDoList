@@ -1,0 +1,87 @@
+.shared-card {
+    background: white;
+    border-radius: 16px;
+    padding: 20px;
+    margin-bottom: 20px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+}
+
+.shared-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.public-badge,
+.private-badge,
+.edit-badge,
+.accepted-badge,
+.pending-badge,
+.completed-badge {
+    padding: 4px 10px;
+    border-radius: 999px;
+    font-size: 12px;
+    font-weight: bold;
+}
+
+.public-badge {
+    background: #DCFCE7;
+}
+
+.private-badge {
+    background: #F3F4F6;
+}
+
+.edit-badge {
+    background: #DBEAFE;
+}
+
+.accepted-badge {
+    background: #DCFCE7;
+}
+
+.pending-badge {
+    background: #FEF3C7;
+}
+
+.completed-badge {
+    background: #E0E7FF;
+}
+
+.shared-user-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 12px;
+}
+
+.user-badges {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+.categories-container {
+    display: flex;
+    gap: 8px;
+    margin: 16px 0;
+    flex-wrap: wrap;
+}
+
+.category-badge {
+    color: white;
+    padding: 4px 10px;
+    border-radius: 999px;
+    font-size: 12px;
+}
+.not-completed-badge {
+    background: #FEE2E2;
+}
+.revoke-button {
+    background: #EF4444;
+    color: white;
+    border: none;
+    padding: 6px 10px;
+    border-radius: 8px;
+    cursor: pointer;
+}

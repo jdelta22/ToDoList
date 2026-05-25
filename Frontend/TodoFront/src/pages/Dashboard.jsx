@@ -32,9 +32,12 @@ function Dashboard() {
   })
 
   async function fetchCategories() {
+
     try {
 
-      const response = await api.get("/categories/")
+      const response = await api.get(
+        "/categories/"
+      )
 
       setCategories(response.data)
 
@@ -43,30 +46,8 @@ function Dashboard() {
     }
   }
 
-  async function updateTask(taskData) {
-    try {
-
-      const response = await api.patch(
-        `/tasks/${taskData.id}/`,
-        taskData
-      )
-
-      setTasks((prev) =>
-        prev.map((task) =>
-          task.id === taskData.id
-            ? response.data
-            : task
-        )
-      )
-
-      setEditingTask(null)
-
-    } catch (error) {
-      console.log(error)
-    }
-  }
-
   async function fetchTasks() {
+
     try {
 
       let url = `/tasks/?page=${page}`
@@ -95,8 +76,10 @@ function Dashboard() {
   }
 
   useEffect(() => {
+
     fetchTasks()
     fetchCategories()
+
   }, [search, status, page])
 
   async function createTask(taskData) {
@@ -108,7 +91,34 @@ function Dashboard() {
         taskData
       )
 
-      setTasks((prev) => [response.data, ...prev])
+      setTasks((prev) => [
+        response.data,
+        ...prev,
+      ])
+
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
+  async function updateTask(taskData) {
+
+    try {
+
+      const response = await api.patch(
+        `/tasks/${taskData.id}/`,
+        taskData
+      )
+
+      setTasks((prev) =>
+        prev.map((task) =>
+          task.id === taskData.id
+            ? response.data
+            : task
+        )
+      )
+
+      setEditingTask(null)
 
     } catch (error) {
       console.log(error)
@@ -122,25 +132,8 @@ function Dashboard() {
       await api.delete(`/tasks/${id}/`)
 
       setTasks((prev) =>
-        prev.filter((task) => task.id !== id)
-      )
-
-    } catch (error) {
-      console.log(error)
-    }
-  }
-
-  async function toggleTask(id, completed) {
-
-    try {
-
-      const response = await api.patch(`/tasks/${id}/`, {
-        completed: !completed,
-      })
-
-      setTasks((prev) =>
-        prev.map((task) =>
-          task.id === id ? response.data : task
+        prev.filter(
+          (task) => task.id !== id
         )
       )
 
@@ -149,7 +142,55 @@ function Dashboard() {
     }
   }
 
+  async function toggleTask(task) {
+
+    try {
+
+      // tarefa compartilhada recebida
+      if (task.share_id) {
+
+        const response = await api.patch(
+          `/received-shares/${task.share_id}/toggle-complete/`
+        )
+
+        setTasks((prev) =>
+          prev.map((item) =>
+            item.id === task.id
+              ? {
+                  ...item,
+                  share_completed:
+                    response.data.completed,
+                }
+              : item
+          )
+        )
+
+      } else {
+
+        // tarefa própria
+        const response = await api.patch(
+          `/tasks/${task.id}/`,
+          {
+            completed: !task.completed,
+          }
+        )
+
+        setTasks((prev) =>
+          prev.map((item) =>
+            item.id === task.id
+              ? response.data
+              : item
+          )
+        )
+      }
+
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
   return (
+
     <div className="dashboard-container">
 
       <Sidebar />
@@ -160,17 +201,25 @@ function Dashboard() {
           Minhas tarefas
         </h1>
 
-        <TaskForm onCreate={createTask} categories={categories} />
+        <TaskForm
+          onCreate={createTask}
+          categories={categories}
+        />
 
         <EditTaskModal
           task={editingTask}
           categories={categories}
-          onClose={() => setEditingTask(null)}
+          onClose={() =>
+            setEditingTask(null)
+          }
           onSave={updateTask}
         />
+
         <ShareTaskModal
           task={sharingTask}
-          onClose={() => setSharingTask(null)}
+          onClose={() =>
+            setSharingTask(null)
+          }
         />
 
         <TaskFilters
@@ -183,6 +232,7 @@ function Dashboard() {
         <div className="tasks-container">
 
           {tasks.map((task) => (
+
             <TaskCard
               key={task.id}
               task={task}
@@ -191,6 +241,7 @@ function Dashboard() {
               onEdit={setEditingTask}
               onShare={setSharingTask}
             />
+
           ))}
 
         </div>
@@ -200,7 +251,6 @@ function Dashboard() {
           page={page}
           setPage={setPage}
         />
-        
 
       </main>
 

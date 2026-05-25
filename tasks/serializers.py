@@ -36,12 +36,66 @@ class TaskSerializer(serializers.ModelSerializer):
         source='categories',
         required=False
     )
+    is_owner = serializers.SerializerMethodField()
+    share_completed = serializers.SerializerMethodField()
+    can_edit = serializers.SerializerMethodField()
+    share_id = serializers.SerializerMethodField()
+
+    def get_is_owner(self, obj):
+        request = self.context.get('request')
+        return obj.owner == request.user
+    
+    def get_share_completed(self, obj):
+        request = self.context.get('request')
+        share = TaskShare.objects.filter(
+            task=obj,
+            user=request.user
+        ).first()
+        return share.completed if share else None
+    
+    def get_share_id(self, obj):
+
+        request = self.context.get('request')
+
+        if not request:
+            return None
+
+        share = TaskShare.objects.filter(
+            task=obj,
+            user=request.user
+        ).first()
+
+        return share.id if share else None
+
+    def get_can_edit(self, obj):
+        request = self.context.get('request')
+        if obj.owner == request.user:
+            return True
+        share = TaskShare.objects.filter(
+            task=obj,
+            user=request.user
+        ).first()
+        return share.can_edit if share else False
 
     class Meta:
         model = Task
         fields = [
-            'id', 'title', 'description', 'completed', 'categories', 'category_ids', 'created_at', 'updated_at', 'share_code', 'is_public'
+            'id',
+            'title',
+            'description',
+            'completed',
+            'categories',
+            'category_ids',
+            'created_at',
+            'updated_at',
+            'share_code',
+            'is_public',
+            'is_owner',
+            'share_id',
+            'share_completed',
+            'can_edit'
         ]
+
     def create(self, validated_data):
         categories = validated_data.pop('categories', [])
 
@@ -79,6 +133,53 @@ class TaskSerializer(serializers.ModelSerializer):
                 raise serializers.ValidationError(f"Category '{category.name}' does not belong to the user.")
         return value
     
+class SharedUserSerializer(serializers.ModelSerializer):
+
+    username = serializers.CharField(
+        source='user.username',
+        read_only=True
+    )
+
+    class Meta:
+        model = TaskShare
+
+        fields = [
+            'id',
+            'username',
+            'can_edit',
+            'completed',
+            'accepted',
+            'invited_at',
+        ]
+
+class SharedTaskSerializer(serializers.ModelSerializer):
+
+    categories = CategorySerializer(
+        many=True,
+        read_only=True
+    )
+
+    users = SharedUserSerializer(
+        source='shares',
+        many=True,
+        read_only=True
+    )
+
+    class Meta:
+        model = Task
+
+        fields = [
+            'id',
+            'title',
+            'description',
+            'completed',
+            'categories',
+            'share_code',
+            'is_public',
+            'created_at',
+            'updated_at',
+            'users',
+        ]
 
 class TaskShareSerializer(serializers.ModelSerializer):
     task = TaskSerializer(read_only=True)

@@ -1,21 +1,60 @@
+import { useEffect, useState } from "react"
+import api from "../services/api"
+
 import Sidebar from "../components/layout/Sidebar"
+import SharedTaskCard from "../components/shared/SharedTaskCard"
 
-function SharedTasks() {
-  return (
-    <div className="flex">
+import "../styles/shared-page.css"
 
-      <Sidebar />
+function SharedPage() {
 
-      <main className="flex-1 p-8 bg-gray-100 min-h-screen">
+    const [tasks, setTasks] = useState([])
 
-        <h1 className="text-3xl font-bold">
-          Tarefas compartilhadas
-        </h1>
+    async function loadTasks() {
 
-      </main>
+        try {
 
-    </div>
-  )
+            const response = await api.get(
+                "/shares/"
+            )
+
+            setTasks(response.data.results)
+
+        } catch (error) {
+            console.log(error)
+        }
+    }
+
+    useEffect(() => {
+        loadTasks()
+    }, [])
+
+    return (
+        <div className="dashboard-container">
+
+            <Sidebar />
+
+            <main className="dashboard-content">
+
+                <h1 className="dashboard-title">
+                    Compartilhadas por mim
+                </h1>
+
+                <div className="shared-tasks-container">
+
+                    {tasks.map((task) => (
+                        <SharedTaskCard
+                            key={task.id}
+                            task={task}
+                        />
+                    ))}
+
+                </div>
+
+            </main>
+
+        </div>
+    )
 }
 
-export default SharedTasks
+export default SharedPage
