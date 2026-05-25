@@ -1,0 +1,33 @@
+@reference "tailwindcss";
+
+.import-modal-overlay {
+  @apply fixed inset-0 bg-black/50 flex items-center justify-center z-50;
+}
+
+.import-modal-content {
+  @apply bg-white w-full max-w-md rounded-2xl p-6 shadow-xl;
+}
+
+.import-modal-title {
+  @apply text-2xl font-bold text-gray-800 mb-5;
+}
+
+.import-modal-input {
+  @apply w-full border border-gray-300 rounded-xl px-4 py-3
+  text-gray-800 placeholder-gray-400 outline-none
+  focus:ring-2 focus:ring-blue-500 focus:border-blue-500;
+}
+
+.import-modal-actions {
+  @apply flex justify-end gap-3 mt-6;
+}
+
+.import-cancel-button {
+  @apply px-4 py-2 rounded-xl bg-gray-200 text-gray-700
+  hover:bg-gray-300 transition;
+}
+
+.import-confirm-button {
+  @apply px-4 py-2 rounded-xl bg-blue-600 text-white
+  hover:bg-blue-700 transition;
+}

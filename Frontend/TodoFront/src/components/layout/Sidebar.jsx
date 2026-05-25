@@ -2,6 +2,7 @@ import { Link, useNavigate } from "react-router-dom"
 import { useContext, useState } from "react"
 
 import { AuthContext } from "../../context/AuthContext"
+import ImportPublicTaskModal from "../tasks/ImportPublicTaskModal"
 
 import "../../styles/sidebar.css"
 
@@ -12,6 +13,8 @@ function Sidebar() {
   const { logout } = useContext(AuthContext)
 
   const [isOpen, setIsOpen] = useState(true)
+
+  const [importModal, setImportModal] = useState(false)
 
   function handleLogout() {
 
@@ -76,11 +79,27 @@ function Sidebar() {
             </Link>
 
             <button
+              onClick={() =>
+                setImportModal(true)
+              }
+              className="sidebar-link text-left"
+            >
+              Importar tarefa
+            </button>
+
+            <button
               onClick={handleLogout}
               className="sidebar-logout"
             >
               Logout
             </button>
+            {importModal && (
+              <ImportPublicTaskModal
+                onClose={() =>
+                  setImportModal(false)
+                }
+              />
+            )}
 
           </nav>
 
