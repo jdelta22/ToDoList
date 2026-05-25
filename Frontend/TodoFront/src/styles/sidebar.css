@@ -1,0 +1,110 @@
+/* sidebar.css */
+
+.sidebar-container {
+  display: flex;
+}
+
+/* SIDEBAR */
+
+.sidebar {
+  width: 260px;
+  min-height: 100vh;
+
+  background-color: #111827;
+  color: white;
+
+  transition: all 0.3s ease;
+
+  overflow: hidden;
+}
+
+.sidebar.closed {
+  width: 70px;
+}
+
+/* HEADER */
+
+.sidebar-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  padding: 20px;
+}
+
+.sidebar-title {
+  font-size: 24px;
+  font-weight: bold;
+
+  white-space: nowrap;
+}
+
+/* BOTÃO */
+
+.sidebar-toggle {
+  background-color: #1f2937;
+  color: white;
+
+  border: none;
+  border-radius: 8px;
+
+  width: 36px;
+  height: 36px;
+
+  cursor: pointer;
+
+  transition: 0.2s;
+}
+
+.sidebar-toggle:hover {
+  background-color: #374151;
+}
+
+/* CONTEÚDO */
+
+.sidebar-content {
+  padding: 0 20px 20px 20px;
+}
+
+.sidebar-nav {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.sidebar-link {
+  color: white;
+  text-decoration: none;
+
+  transition: 0.2s;
+
+  white-space: nowrap;
+}
+
+.sidebar-link:hover {
+  color: #60a5fa;
+}
+
+.sidebar-logout {
+  background: none;
+  border: none;
+
+  color: white;
+
+  text-align: left;
+
+  cursor: pointer;
+
+  transition: 0.2s;
+}
+
+.sidebar-logout:hover {
+  color: #f87171;
+}
+
+/* QUANDO FECHADA */
+
+.sidebar.closed .sidebar-title,
+.sidebar.closed .sidebar-nav {
+  display: none;
+}

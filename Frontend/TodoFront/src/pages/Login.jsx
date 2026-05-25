@@ -15,14 +15,26 @@ function Login() {
   async function handleLogin(e) {
     e.preventDefault()
     try {
-      const response = await api.post("/token/", { username, password })
-      login(response.data.access)
+      const response = await api.post(
+        "/token/",
+        {
+          username,
+          password,
+        }
+      )
+      localStorage.setItem(
+        "access",
+        response.data.access
+      )
+      localStorage.setItem(
+        "refresh",
+        response.data.refresh
+      )
       navigate("/dashboard")
-
     } catch (error) {
-      alert("Login falhou. Verifique suas credenciais.")
+      console.log(error)
     }
-  } 
+  }
 
 
 

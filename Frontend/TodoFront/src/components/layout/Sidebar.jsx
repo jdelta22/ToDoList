@@ -1,13 +1,17 @@
 import { Link, useNavigate } from "react-router-dom"
-import { useContext } from "react"
+import { useContext, useState } from "react"
 
 import { AuthContext } from "../../context/AuthContext"
+
+import "../../styles/sidebar.css"
 
 function Sidebar() {
 
   const navigate = useNavigate()
 
   const { logout } = useContext(AuthContext)
+
+  const [isOpen, setIsOpen] = useState(true)
 
   function handleLogout() {
 
@@ -17,46 +21,68 @@ function Sidebar() {
   }
 
   return (
-    <aside className="w-64 bg-gray-900 text-white min-h-screen p-6">
+    <div className="sidebar-container">
 
-      <h1 className="text-2xl font-bold mb-8">
-        TodoList
-      </h1>
+      <aside
+        className={`sidebar ${
+          isOpen ? "" : "closed"
+        }`}
+      >
 
-      <nav className="flex flex-col gap-4">
+        <div className="sidebar-header">
 
-        <Link
-          to="/dashboard"
-          className="hover:text-blue-400 transition"
-        >
-          Minhas tarefas
-        </Link>
+          <h1 className="sidebar-title">
+            TodoList
+          </h1>
 
-        <Link
-          to="/shared"
-          className="hover:text-blue-400 transition"
-        >
-          Compartilhadas
-        </Link>
+          <button
+            className="sidebar-toggle"
+            onClick={() => setIsOpen(!isOpen)}
+          >
+            {isOpen ? "←" : "→"}
+          </button>
 
-        <Link
-          to="/received"
-          className="hover:text-blue-400 transition"
-        >
-          Recebidas
-        </Link>
+        </div>
 
-        <button
-          onClick={handleLogout}
-          className="text-left hover:text-red-400 transition"
-        >
-          Logout
-        </button>
+        <div className="sidebar-content">
 
-      </nav>
+          <nav className="sidebar-nav">
 
-    </aside>
+            <Link
+              to="/dashboard"
+              className="sidebar-link"
+            >
+              Minhas tarefas
+            </Link>
+
+            <Link
+              to="/shared"
+              className="sidebar-link"
+            >
+              Compartilhadas
+            </Link>
+
+            <Link
+              to="/received"
+              className="sidebar-link"
+            >
+              Recebidas
+            </Link>
+
+            <button
+              onClick={handleLogout}
+              className="sidebar-logout"
+            >
+              Logout
+            </button>
+
+          </nav>
+
+        </div>
+
+      </aside>
+
+    </div>
   )
 }
-
 export default Sidebar
