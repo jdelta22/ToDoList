@@ -5,6 +5,7 @@ function TaskCard({
   onDelete,
   onToggle,
   onEdit,
+  onShare,
 }) {
 
   return (
@@ -93,7 +94,10 @@ function TaskCard({
           Editar
         </button>
 
-        <button className="share-button">
+        <button
+          onClick={() => onShare(task)}
+          className="share-button"
+        >
           Compartilhar
         </button>
 

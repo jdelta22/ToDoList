@@ -7,7 +7,7 @@ import Register from "./pages/Register"
 import Dashboard from "./pages/Dashboard"
 import SharedTasks from "./pages/SharedTasks"
 import ReceivedTasks from "./pages/ReceivedTasks"
-
+import PublicTaskPage from "./pages/PublicTaskPage"
 
 import PrivateRoute from "./routes/PrivateRoute"
 
@@ -40,6 +40,10 @@ function App() {
               <ReceivedTasks />
             </PrivateRoute>
           }
+        />
+        <Route
+          path="/share/:share_code"
+          element={<PublicTaskPage />}
         />
 
       </Routes>

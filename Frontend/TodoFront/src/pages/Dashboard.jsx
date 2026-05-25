@@ -6,6 +6,7 @@ import TaskCard from "../components/tasks/TaskCard"
 import EditTaskModal from "../components/tasks/EditTaskModal"
 import TaskFilters from "../components/tasks/TaskFilters"
 import TaskPagination from "../components/tasks/TaskPagination"
+import ShareTaskModal from "../components/tasks/ShareTaskModal"
 
 import api from "../services/api"
 
@@ -19,6 +20,8 @@ function Dashboard() {
 
   const [search, setSearch] = useState("")
   const [status, setStatus] = useState("all")
+
+  const [sharingTask, setSharingTask] = useState(null)
 
   const [page, setPage] = useState(1)
 
@@ -165,6 +168,10 @@ function Dashboard() {
           onClose={() => setEditingTask(null)}
           onSave={updateTask}
         />
+        <ShareTaskModal
+          task={sharingTask}
+          onClose={() => setSharingTask(null)}
+        />
 
         <TaskFilters
           search={search}
@@ -182,6 +189,7 @@ function Dashboard() {
               onDelete={deleteTask}
               onToggle={toggleTask}
               onEdit={setEditingTask}
+              onShare={setSharingTask}
             />
           ))}
 

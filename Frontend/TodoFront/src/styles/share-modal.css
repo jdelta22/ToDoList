@@ -1,0 +1,44 @@
+@reference "tailwindcss";
+
+.share-section {
+  @apply flex flex-col gap-4 mt-6;
+}
+
+.section-title {
+  @apply text-lg font-semibold text-gray-800;
+}
+
+.public-button {
+  @apply bg-purple-600 text-white px-4 py-2 rounded-lg hover:bg-purple-700 transition;
+}
+
+.public-link-box {
+  @apply flex gap-2;
+}
+
+.public-link-input {
+  @apply flex-1 border border-gray-300 rounded-lg p-3;
+}
+
+.copy-button {
+  @apply bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition;
+}
+
+.checkbox-label {
+  @apply flex items-center gap-2 text-gray-700;
+}
+
+.invite-button {
+  @apply bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition;
+}
+
+.close-button {
+  @apply bg-gray-300 px-4 py-2 rounded-lg mt-6 hover:bg-gray-400 transition;
+}
+
+.public-active-button {
+  @apply bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition;
+}
+.public-status {
+  @apply text-sm text-gray-600;
+}

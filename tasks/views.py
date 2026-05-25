@@ -119,7 +119,8 @@ class TaskViewSet(viewsets.ModelViewSet):
 def Clone_public_task(request, share_code):
 
     original_task = Task.objects.filter(
-        share_code=share_code
+        share_code=share_code,
+        is_public=True
     ).first()
 
     if not original_task:
@@ -142,6 +143,53 @@ def Clone_public_task(request, share_code):
         'detail': 'Task cloned successfully',
         'task_id': new_task.id
     })
+
+
+@api_view(['POST'])
+@permission_classes([permissions.IsAuthenticated])
+def toggle_public(request, share_code):
+
+    task = Task.objects.filter(
+        share_code=share_code
+    ).first()
+
+    if not task:
+        return Response(
+            {'detail': 'Task not found'},
+            status=404
+        )
+
+    if task.owner != request.user:
+        return Response(
+            {'detail': 'Permission denied'},
+            status=403
+        )
+
+    task.is_public = not task.is_public
+    task.save()
+
+    return Response({
+        'is_public': task.is_public,
+        'share_code': str(task.share_code)
+    })
+
+@api_view(['GET'])
+def public_task_detail(request, share_code):
+
+    task = Task.objects.filter(
+        share_code=share_code,
+        is_public=True
+    ).first()
+
+    if not task:
+        return Response(
+            {'detail': 'Task not found'},
+            status=404
+        )
+
+    serializer = TaskSerializer(task)
+
+    return Response(serializer.data)
     
 class CategoryViewSet(viewsets.ModelViewSet):
     pagination_class = None

@@ -1,12 +1,14 @@
 from django.urls import path
-from .views import RegisterViewSet, TaskViewSet, CategoryViewSet, Clone_public_task, TaskSharedViewSet, TaskReceivedShareViewSet
+from .views import RegisterViewSet, TaskViewSet, CategoryViewSet, Clone_public_task, TaskSharedViewSet, TaskReceivedShareViewSet, toggle_public, public_task_detail
 
 urlpatterns = [
     path('register/', RegisterViewSet.as_view({'post': 'create'}), name='register'),
     path('tasks/', TaskViewSet.as_view({'get': 'list', 'post': 'create'}), name='task-list'),
     path('tasks/<int:pk>/', TaskViewSet.as_view({'get': 'retrieve', 'patch': 'update', 'delete': 'destroy'}), name='task-detail'),
     path('tasks/<int:pk>/invite/', TaskViewSet.as_view({'post': 'invite'}), name='task-invite'),
+    path('public/tasks/<uuid:share_code>/', public_task_detail, name='public-task-detail'),
     path('public/tasks/<uuid:share_code>/clone/', Clone_public_task, name='clone-public-task'),
+    path('public/tasks/<uuid:share_code>/make-public/', toggle_public, name='make-public-task'),
     path('categories/', CategoryViewSet.as_view({'get': 'list', 'post': 'create'}), name='category-list'),
     path('categories/<int:pk>/', CategoryViewSet.as_view({'get': 'retrieve', 'patch': 'update', 'delete': 'destroy'}), name='category-detail'),
     path('shares/', TaskSharedViewSet.as_view({'get': 'list'}), name='share-list'),
