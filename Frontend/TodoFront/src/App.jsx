@@ -9,6 +9,7 @@ import SharedTasks from "./pages/SharedTasks"
 import ReceivedTasks from "./pages/ReceivedTasks"
 import PublicTaskPage from "./pages/PublicTaskPage"
 
+
 import PrivateRoute from "./routes/PrivateRoute"
 
 function App() {
@@ -45,7 +46,6 @@ function App() {
           path="/share/:share_code"
           element={<PublicTaskPage />}
         />
-
       </Routes>
       
     </BrowserRouter>
