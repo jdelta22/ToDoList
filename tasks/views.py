@@ -7,13 +7,57 @@ from rest_framework.response import Response
 from django.db.models import Q
 from django.shortcuts import get_object_or_404
 from django_filters.rest_framework import DjangoFilterBackend
-from rest_framework.filters import SearchFilter
-from rest_framework.filters import OrderingFilter
+from rest_framework.filters import SearchFilter, OrderingFilter
+from django_filters import FilterSet, CharFilter
 
 from .models import Task, Category, TaskShare
 from .serializers import RegisterSerializer, TaskSerializer, CategorySerializer, TaskShareSerializer, SharedTaskSerializer
 
 # Create your views here.
+
+class TaskFilter(FilterSet):
+
+    completed = CharFilter(
+        method='filter_completed'
+    )
+
+    class Meta:
+        model = Task
+        fields = ['completed', 'categories']
+
+    def filter_completed(self, queryset, name, value):
+
+        user = self.request.user
+
+        if value == "true":
+
+            return queryset.filter(
+                Q(
+                    owner=user,
+                    completed=True
+                ) |
+                Q(
+                    shares__user=user,
+                    shares__completed=True,
+                    shares__accepted=True
+                )
+            ).distinct()
+
+        if value == "false":
+
+            return queryset.filter(
+                Q(
+                    owner=user,
+                    completed=False
+                ) |
+                Q(
+                    shares__user=user,
+                    shares__completed=False,
+                    shares__accepted=True
+                )
+            ).distinct()
+
+        return queryset
 
 class RegisterViewSet(viewsets.ModelViewSet):
     permission_classes = [permissions.AllowAny]
@@ -29,10 +73,7 @@ class TaskViewSet(viewsets.ModelViewSet):
         OrderingFilter,
     ]
 
-    filterset_fields = [
-        'completed',
-        'categories',
-    ]
+    filterset_class = TaskFilter
 
     search_fields = [
         'title',
@@ -286,6 +327,8 @@ class TaskReceivedShareViewSet(viewsets.ModelViewSet):
 
     filterset_fields = [
         'accepted',
+        'completed',
+        'can_edit',
         'task__categories',
         'task__owner',
     ]
