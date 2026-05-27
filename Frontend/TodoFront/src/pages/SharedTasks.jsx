@@ -75,6 +75,29 @@ function SharedTasks() {
     }
   }
 
+  const handleRevoke = async (taskId, shareId) => {
+  try {
+    await api.delete(
+      `/tasks/${taskId}/shares/${shareId}/revoke/`
+    )
+
+    setTasks(prev =>
+      prev.map(task =>
+        task.id === taskId
+          ? {
+              ...task,
+              users: task.users.filter(
+                share => share.id !== shareId
+              )
+            }
+          : task
+      )
+    )
+
+  } catch (err) {
+    console.error(err)
+  }}
+
   useEffect(() => {
 
     fetchTasks()
@@ -117,6 +140,7 @@ function SharedTasks() {
             <SharedTaskCard
               key={task.id}
               task={task}
+              onRevoke={handleRevoke}
             />
           ))}
 

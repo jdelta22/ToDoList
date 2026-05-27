@@ -1,7 +1,7 @@
 function SharedTaskCard({
   task,
   onRevoke,
-}) {
+}) {  
 
   return (
     <div className="bg-white rounded-2xl p-5 shadow-sm border border-gray-100 hover:shadow-md transition">
@@ -122,12 +122,10 @@ function SharedTaskCard({
             </div>
 
             <button
-              onClick={() =>
-                onRevoke(user.id)
-              }
+              onClick={() => onRevoke(task.id, user.id)}
               className="bg-red-500 hover:bg-red-600 text-white px-3 py-2 rounded-xl text-sm font-medium transition"
             >
-              Revogar
+              Revogar acesso
             </button>
 
           </div>
