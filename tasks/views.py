@@ -11,7 +11,7 @@ from rest_framework.filters import SearchFilter, OrderingFilter
 from django_filters import FilterSet, CharFilter
 
 from .models import Task, Category, TaskShare
-from .serializers import RegisterSerializer, TaskSerializer, CategorySerializer, TaskShareSerializer, SharedTaskSerializer
+from .serializers import RegisterSerializer, TaskSerializer, CategorySerializer, SharedTaskSerializer, TaskShareSerializer
 
 # Create your views here.
 
@@ -250,35 +250,6 @@ class CategoryViewSet(viewsets.ModelViewSet):
     
     def perform_create(self, serializer):
         serializer.save(owner=self.request.user)
-
-class TaskSharedViewSet(viewsets.ModelViewSet):
-
-    serializer_class = TaskShareSerializer
-    permission_classes = [permissions.IsAuthenticated]
-    http_method_names = ['get', 'delete']
-
-    def get_queryset(self):
-
-        return TaskShare.objects.filter(
-            task__owner=self.request.user
-        )
-
-    def destroy(self, request, *args, **kwargs):
-
-        share = self.get_object()
-
-        if share.task.owner != request.user:
-            return Response(
-                {'detail': 'Permission denied'},
-                status=status.HTTP_403_FORBIDDEN
-            )
-
-        share.delete()
-
-        return Response(
-            {'detail': 'Share revoked'},
-            status=status.HTTP_204_NO_CONTENT
-        )
     
 class SharedByMeViewSet(viewsets.ReadOnlyModelViewSet):
 
@@ -401,3 +372,26 @@ class TaskReceivedShareViewSet(viewsets.ModelViewSet):
         return Response({
             'completed': share.completed
         })
+    
+@api_view(["DELETE"])
+@permission_classes([permissions.IsAuthenticated])
+def revoke_share(request, task_id, share_id):
+
+    try:
+        share = TaskShare.objects.get(
+            id=share_id,
+            task_id=task_id
+        )
+
+        share.delete()
+
+        return Response(
+            {'detail': 'Share revoked successfully'},
+            status=status.HTTP_200_OK
+        )
+
+    except TaskShare.DoesNotExist:
+        return Response(
+            {"detail": "Compartilhamento não encontrado"},
+            status=status.HTTP_404_NOT_FOUND
+        )

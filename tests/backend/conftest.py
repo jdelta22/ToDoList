@@ -36,6 +36,15 @@ def authenticated_client(api_client, user):
 
 
 @pytest.fixture
+def authenticated_other_client(other_user):
+
+    client = APIClient()
+
+    client.force_authenticate(user=other_user)
+
+    return client
+
+@pytest.fixture
 def category(user):
 
     return Category.objects.create(

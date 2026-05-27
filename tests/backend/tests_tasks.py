@@ -1,5 +1,7 @@
 import pytest
 
+from tasks.models import Task
+
 @pytest.mark.django_db
 def test_create_task(
     authenticated_client,
