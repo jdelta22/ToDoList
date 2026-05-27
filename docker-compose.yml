@@ -1,0 +1,54 @@
+services:
+
+  db:
+    image: postgres:17
+    container_name: tododb
+    restart: always
+    environment:
+      POSTGRES_DB: todolist
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - "5432:5432"
+
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+
+    container_name: todobackend
+
+    command: uv run python manage.py runserver 0.0.0.0:8000
+
+    volumes:
+      - .:/app
+      - /app/.venv
+
+    ports:
+      - "8000:8000"
+
+    env_file:
+      - .env
+
+    depends_on:
+      - db
+
+  frontend:
+    build:
+      context: ./Frontend/TodoFront
+      dockerfile: Dockerfile
+
+    container_name: todofrontend
+
+    volumes:
+      - ./Frontend/TodoFront:/app
+      - /app/node_modules
+
+    ports:
+      - "5173:5173"
+
+    env_file:
+      - ./Frontend/TodoFront/.env
+
+    depends_on:
+      - backend
