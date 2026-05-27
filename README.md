@@ -137,8 +137,23 @@ pytest
 ```
 
 
+## 5 .📚 Documentação da API
 
-## 📌 5. Decisões técnicas
+Este projeto possui documentação interativa da API gerada automaticamente com Swagger (OpenAPI).
+
+Após iniciar o backend, você pode acessar:
+
+### 🔗 Schema da API (OpenAPI)
+```
+http://localhost:8000/api/schema/
+```
+
+### 📖 Interface Swagger UI
+```
+http://localhost:8000/api/docs/
+``` 
+
+## 📌 6. Decisões técnicas
 - Docker usado apenas para ambiente de execução
 - Testes rodados separadamente (CI-ready)
 - Frontend desacoplado do backend via REST API

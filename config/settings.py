@@ -47,7 +47,8 @@ INSTALLED_APPS = [
     'django_filters',
     'corsheaders',
     'rest_framework',
-    'rest_framework_simplejwt',   
+    'rest_framework_simplejwt', 
+    "drf_spectacular",
 ]
 
 MIDDLEWARE = [
@@ -129,7 +130,8 @@ USE_TZ = True
 STATIC_URL = 'static/'
 
 REST_FRAMEWORK = {
-     "DEFAULT_AUTHENTICATION_CLASSES": (
+    "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",
+    "DEFAULT_AUTHENTICATION_CLASSES": (
         "rest_framework_simplejwt.authentication.JWTAuthentication",
     ),
 
@@ -158,7 +160,7 @@ SIMPLE_JWT = {
 CORS_ALLOWED_ORIGINS = config("CORS_ALLOWED_ORIGINS").split(",")
 
 if "test" in sys.argv or DEBUG == True:
-    DATABASES = { "default": { "ENGINE": "django.db.backends.sqlite3", "NAME": ":memory:", } }
+    DATABASES = { "default": { "ENGINE": "django.db.backends.sqlite3", "NAME": BASE_DIR / "db.sqlite3", } }
 else:
     DATABASES = {
         "default": {
